@@ -9,7 +9,7 @@
         android:color="@color/colorBtnSolid"
         />
 
-    // Reduce the corner radius value
+    <!-- Reduce the corner radius value -->
     <corners android:radius="10dp" />
 
     <padding
