@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private Button vEmailSignInBtn;
     private Button vRegisterBtn;
     private TextView vMessages;
+    private String[] eMailAutoList ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         findViews();
         setTitle(getString(R.string.app_name) + ": Login");
+        eMailAutoList = getResources().getStringArray(R.array.email_auto_list);
+        vMessages.setText(eMailAutoList[0]+"\n"+eMailAutoList[1]+"\n"+eMailAutoList[2]+"\n"+eMailAutoList[3]);
     }
     private void findViews() {
         vProgress = findViewById(R.id.login_progress);
