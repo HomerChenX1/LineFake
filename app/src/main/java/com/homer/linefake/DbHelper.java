@@ -143,14 +143,19 @@ class ChatMsg {
         return this;
     }
 }
-class DbHelper {
-    private static final DbHelper ourInstance = new DbHelper();
+public class DbHelper {
     private ArrayList<Member> memberTable = new ArrayList<>();
     private ArrayList<Integer []> friendTable = new ArrayList<>();
     private ArrayList<ChatMsg> channel = new ArrayList<>();
 
+    private static DbHelper ourInstance;
+
     private DbHelper() {}
-    static DbHelper getInstance() {
+    //  http://givemepass-blog.logdown.com/posts/288939-sigleton-pattern
+    public static DbHelper getInstance() {
+        if (ourInstance == null) {
+            ourInstance = new DbHelper();
+        }
         return ourInstance;
     }
 
