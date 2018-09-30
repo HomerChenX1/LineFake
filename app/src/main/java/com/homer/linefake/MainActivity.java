@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -44,7 +45,42 @@ public class MainActivity extends AppCompatActivity {
         vMessages = findViewById(R.id.login_messages);
     }
 
-    public void onClickEmailSignIn(View view){}
+    public void onClickEmailSignIn(View view){
+        View vFocus = null;
+        boolean cancel = false;
+
+        // for password processing
+        vPassword.setError(null);
+        String password = vPassword.getText().toString().trim();
+        // Check for a valid password, if the user entered one.
+        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+            vPassword.setError(getString(R.string.error_invalid_password));
+            vFocus = vPassword;
+            cancel = true;
+        }
+        if (cancel) {
+            // There was an error; don't attempt login and focus the first
+            // form field with an error.
+            vFocus.requestFocus();
+        } else {
+            // Show a progress spinner, and kick off a background task to
+            // perform the user login attempt.
+            showProgress(true);
+            vMessages.setText("Password:" + password);
+            // mAuthTask = new UserLoginTask(email, password);
+            // mAuthTask.execute((Void) null);
+            showProgress(false);
+        }
+    }
+    private boolean isPasswordValid(String password) {
+        //TODO: Replace this with your own logic
+        return password.length() > 6;
+    }
+    private void showProgress(final boolean show) {
+        vProgress.setVisibility(show ? View.VISIBLE : View.GONE);
+        // others must be hidden
+        // mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+    }
 
     public void onClickRegister(View view){
         Intent intent = new Intent(this, MemberActivity.class);

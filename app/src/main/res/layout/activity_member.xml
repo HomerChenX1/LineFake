@@ -29,6 +29,7 @@
                 android:id="@+id/mbr_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="#DDDDFF"
                 android:lines="2"
                 android:text="@string/prompt_id" />
 
@@ -116,6 +117,17 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/button_round"
                 android:text="@string/action_cancel"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/mbr_delete_btn"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/button_round"
+                android:text="@string/action_delete"
                 android:textStyle="bold" />
 
         </LinearLayout>
