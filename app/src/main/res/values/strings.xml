@@ -13,5 +13,5 @@
     <string name="error_field_required">This field is required</string>
     <string name="prompt_id">ID</string>
     <string name="prompt_alias">Nick name(4 digits needed at least)</string>
-    <string name="prompt_phone">Phone number (needed)</string>
+    <string name="prompt_phone">Phone number (6 digits needed at least)</string>
 </resources>

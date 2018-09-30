@@ -54,29 +54,42 @@ public class MainActivity extends AppCompatActivity {
     public void onClickEmailSignIn(View view){
         View vFocus = null;
         boolean cancel = false;
+        int temp;
         // for email processing
         vEmail.setError(null);
         String email = vEmail.getText().toString().trim();
         // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            vEmail.setError(getString(R.string.error_field_required));
+        temp = Member.isEmailValid(email);
+        if(temp!=0){
             vFocus = vEmail;
             cancel = true;
-        } else if (!isEmailValid(email)) {
-            vEmail.setError(getString(R.string.error_invalid_email));
-            vFocus = vEmail;
-            cancel = true;
+        }
+        switch (temp){
+            case 1:
+                vEmail.setError(getString(R.string.error_field_required));
+                break;
+            case 2:
+                vEmail.setError(getString(R.string.error_invalid_email));
         }
 
         // for password processing
         vPassword.setError(null);
         String password = vPassword.getText().toString().trim();
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            vPassword.setError(getString(R.string.error_invalid_password));
+        temp = Member.isPasswordValid(password);
+        if(temp!=0){
+            // vPassword.setError(getString(R.string.error_invalid_password));
             vFocus = vPassword;
             cancel = true;
         }
+        switch (temp){
+            case 1:
+                vPassword.setError(getString(R.string.error_field_required));
+                break;
+            case 2:
+                vPassword.setError(getString(R.string.error_invalid_password));
+        }
+
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
