@@ -28,12 +28,13 @@
         app:counterEnabled="true"
         app:counterMaxLength="30" >
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/login_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/prompt_email"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:completionThreshold="1" />
 
     </android.support.design.widget.TextInputLayout>
 
