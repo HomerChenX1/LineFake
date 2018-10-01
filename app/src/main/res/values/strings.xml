@@ -11,6 +11,7 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
+    <string name="error_invalid_field">This content is too short</string>
     <string name="prompt_id">ID</string>
     <string name="prompt_alias">Nick name(4 digits needed at least)</string>
     <string name="prompt_phone">Phone number (6 digits needed at least)</string>

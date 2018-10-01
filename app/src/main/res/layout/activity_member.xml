@@ -106,7 +106,8 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/button_round"
                 android:text="@string/action_register"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:onClick="onClickMbrRegister"/>
 
             <Button
                 android:id="@+id/mbr_cancel_btn"
@@ -117,7 +118,8 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/button_round"
                 android:text="@string/action_cancel"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:onClick="onClickMbrCancel" />
 
             <Button
                 android:id="@+id/mbr_delete_btn"
@@ -128,7 +130,8 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/button_round"
                 android:text="@string/action_delete"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:onClick="onClickMbrDelete" />
 
         </LinearLayout>
     </ScrollView>

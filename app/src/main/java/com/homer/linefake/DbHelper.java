@@ -9,22 +9,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class Member {
-    private int mbrID = 3;
-    private int mbrIconIdx = 3;
-    private String mbrAlias = "guest";
-    private String mbrPhone = "0333333";
-    private String mbrEmail = "guest@null.com";
-    private String mbrPassword = "333333";
-    private Set<Integer> friendSet = new HashSet<>();
+    private int mbrID = 0;
+    private int mbrIconIdx = 0;
+    private String mbrAlias;
+    private String mbrPhone;
+    private String mbrEmail;
+    private String mbrPassword;
 
     private static final String EMAIL_PATTERN = "^[a-zA-Z0-9#_~!$&'()*+,;=:.\"(),:;<>@\\[\\]\\\\]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*$";
     private static Pattern pattern = Pattern.compile(EMAIL_PATTERN);
-
-    public Set<Integer> getFriendSet() { return friendSet; }
-    public Member setFriendSet(Set<Integer> friendSet) {
-        this.friendSet = friendSet;
-        return this;
-    }
 
     public int getMbrID() { return mbrID; }
     public Member setMbrID(int mbrID) {
@@ -90,6 +83,16 @@ class Member {
         return 0;
     }
 
+}
+
+class MemberWithFriend extends Member {
+    private Set<Integer> friendSet = new HashSet<>();
+
+    public Set<Integer> getFriendSet() { return friendSet; }
+    public Member setFriendSet(Set<Integer> friendSet) {
+        this.friendSet = friendSet;
+        return this;
+    }
 }
 
 class ChatMsg {

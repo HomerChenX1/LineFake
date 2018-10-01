@@ -76,18 +76,20 @@ public class MainActivity extends AppCompatActivity {
         vPassword.setError(null);
         String password = vPassword.getText().toString().trim();
         // Check for a valid password, if the user entered one.
-        temp = Member.isPasswordValid(password);
-        if(temp!=0){
-            // vPassword.setError(getString(R.string.error_invalid_password));
-            vFocus = vPassword;
-            cancel = true;
-        }
-        switch (temp){
-            case 1:
-                vPassword.setError(getString(R.string.error_field_required));
-                break;
-            case 2:
-                vPassword.setError(getString(R.string.error_invalid_password));
+        if(temp==0) {
+            temp = Member.isPasswordValid(password);
+            if (temp != 0) {
+                // vPassword.setError(getString(R.string.error_invalid_password));
+                vFocus = vPassword;
+                cancel = true;
+            }
+            switch (temp) {
+                case 1:
+                    vPassword.setError(getString(R.string.error_field_required));
+                    break;
+                case 2:
+                    vPassword.setError(getString(R.string.error_invalid_password));
+            }
         }
 
         if (cancel) {
@@ -104,14 +106,7 @@ public class MainActivity extends AppCompatActivity {
             showProgress(false);
         }
     }
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
-    }
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() >= 6;
-    }
+
     private void showProgress(final boolean show) {
         vProgress.setVisibility(show ? View.VISIBLE : View.GONE);
         // others must be hidden
