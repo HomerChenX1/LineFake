@@ -250,7 +250,7 @@ public class DbHelper {
         // add friendTable
         // add chatMsgTable
         // when login , create channel
-        
+
     }
 
 }
