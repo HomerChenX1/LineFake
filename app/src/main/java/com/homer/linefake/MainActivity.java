@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         eMailAutoList = getResources().getStringArray(R.array.email_auto_list);
         findViews();
         vMessages.setText(eMailAutoList[0]+"\n"+eMailAutoList[1]+"\n"+eMailAutoList[2]+"\n"+eMailAutoList[3]);
+        DbHelper.getInstance().initDbHelper();
     }
     private void findViews() {
         vProgress = findViewById(R.id.login_progress);
@@ -104,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
             // mAuthTask = new UserLoginTask(email, password);
             // mAuthTask.execute((Void) null);
             showProgress(false);
+            Intent intent = new Intent(this, InfoActivity.class);
+            startActivity(intent);
         }
     }
 

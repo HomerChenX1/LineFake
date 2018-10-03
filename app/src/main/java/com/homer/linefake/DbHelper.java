@@ -27,7 +27,24 @@ class Member {
 
     public int getMbrIconIdx() { return mbrIconIdx; }
     public Member setMbrIconIdx(int mbrIconIdx) {
-        this.mbrIconIdx = mbrIconIdx;
+        // mbrIconIdx is not used
+        int [] pics = {
+                R.drawable.p02,
+                R.drawable.p03,
+                R.drawable.p04,
+                R.drawable.p05,
+                R.drawable.p06,
+                R.drawable.p07,
+                R.drawable.p08,
+                R.drawable.p01
+        };
+
+        int i = 7;
+
+        if(mbrID > 0) {
+            i = (mbrID - 1) % 7;
+        }
+        this.mbrIconIdx = pics[i];
         return(this);
     }
 
@@ -247,9 +264,35 @@ public class DbHelper {
         // create tables: memberTable, friendTable, chatMsgTable
         // channel is internal use, create when channel is opened (master and owner)
         //  add memberTable
-        // add friendTable
+        Member x = new Member();
+        x.setMbrID(1).setMbrAlias("admin").setMbrEmail("admin@null.com")
+                .setMbrPassword("111111").setMbrPhone("0111111");
+        addMember(x);
+
+        x = new Member();
+        x.setMbrID(2).setMbrAlias("owner").setMbrEmail("owner@null.com")
+                .setMbrPassword("222222").setMbrPhone("0222222");
+        addMember(x);
+
+        x = new Member();
+        x.setMbrID(3).setMbrAlias("master").setMbrEmail("master@null.com")
+                .setMbrPassword("333333").setMbrPhone("0333333");
+        addMember(x);
+
+        x = new Member();
+        x.setMbrID(4).setMbrAlias("guest").setMbrEmail("guest@null.com")
+                .setMbrPassword("444444").setMbrPhone("0444444");
+        addMember(x);
+
+        // add friendTable (1,2,3,4)  (2,3,4)
+        addFriend(1,2);
+        addFriend(1,3);
+        addFriend(1,4);
+        addFriend(2,3);
+        // addFriend(3,4);
+
         // add chatMsgTable
-        // when login , create channel
+        // when login , create channel, implememt in login
 
     }
 
