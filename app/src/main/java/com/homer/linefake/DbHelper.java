@@ -55,6 +55,24 @@ class Member {
         return(this);
     }
 
+    public void copyFrom(Member x){
+        mbrID = x.getMbrID();
+        mbrIconIdx = x.getMbrIconIdx();
+        mbrAlias = x.getMbrAlias();
+        mbrPhone = x.getMbrPhone();
+        mbrEmail = x.getMbrEmail();
+        mbrPassword = x.getMbrPassword();
+    }
+
+    public void copyTo(Member x){
+        x.setMbrID(mbrID);
+        x.setMbrIconIdx(mbrIconIdx);
+        x.setMbrAlias(mbrAlias);
+        x.setMbrPhone(mbrPhone);
+        x.setMbrEmail(mbrEmail);
+        x.setMbrPassword(mbrPassword);
+    }
+
     static int isEmailValid(String email) {
         //TODO: Replace this with your own logic
         if(TextUtils.isEmpty(email)){ return 1; }
@@ -147,9 +165,13 @@ class ChatMsg {
     }
 }
 public class DbHelper {
+    public static MemberWithFriend owner = new MemberWithFriend();
+    public static Member master = new Member();
+    public static Member guest = new Member();
     private ArrayList<Member> memberTable = new ArrayList<>();
     private ArrayList<Integer []> friendTable = new ArrayList<>();
-    private ArrayList<ChatMsg> channel = new ArrayList<>();
+    private ArrayList<ChatMsg> chatMsgTable = new ArrayList<>();
+    private ArrayList<ChatMsg> channel = new ArrayList<>(); // only contains ChatMsg between owner and master
 
     private static DbHelper ourInstance;
 
@@ -160,6 +182,75 @@ public class DbHelper {
             ourInstance = new DbHelper();
         }
         return ourInstance;
+    }
+    void addMember(Member x){ memberTable.add(x); }
+
+    void updateMember(Member input){
+        int memberId = input.getMbrID();
+        for(Member x:memberTable){
+            if(x.getMbrID() == memberId){
+                x.copyFrom(input);
+                break;
+            }
+        }
+    }
+
+    void deleteMember(int memberId){
+        for(Member x:memberTable){
+            if(x.getMbrID() == memberId){
+                memberTable.remove(x);
+                break;
+            }
+        }
+    }
+
+    void addFriend(int ownerId, int masterId){
+        Integer [] x1 = { ownerId, masterId};
+        Integer [] x2 = { masterId, ownerId };
+        friendTable.add(x1);
+        friendTable.add(x2);
+    }
+
+    void deleteFriend(int ownerId, int masterId){
+        for(Integer [] x : friendTable){
+            if((x[0] == ownerId) && (x[1] == masterId)){
+                friendTable.remove(x);
+            }
+            if((x[1] == ownerId) && (x[0] == masterId)){
+                friendTable.remove(x);
+            }
+        }
+    }
+    void addChat(ChatMsg x){ chatMsgTable.add(x); }
+
+    void deleteChat(int chatId){
+        for(ChatMsg x:chatMsgTable){
+            if(x.getChatId() == chatId){
+                chatMsgTable.remove(x);
+                break;
+            }
+        }
+    }
+
+    void addChannel(ChatMsg x){ channel.add(x); }
+
+    void deleteChannel(int chatId){
+        for(ChatMsg x:channel){
+            if(x.getChatId() == chatId){
+                channel.remove(x);
+                break;
+            }
+        }
+    }
+    void initDbHelper(){
+        // create DB if DB not exist
+        // create tables: memberTable, friendTable, chatMsgTable
+        // channel is internal use, create when channel is opened (master and owner)
+        //  add memberTable
+        // add friendTable
+        // add chatMsgTable
+        // when login , create channel
+        
     }
 
 }
