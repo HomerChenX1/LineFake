@@ -27,7 +27,24 @@ class Member {
 
     public int getMbrIconIdx() { return mbrIconIdx; }
     public Member setMbrIconIdx(int mbrIconIdx) {
-        this.mbrIconIdx = mbrIconIdx;
+        // mbrIconIdx is not used
+        int [] pics = {
+                R.drawable.p02,
+                R.drawable.p03,
+                R.drawable.p04,
+                R.drawable.p05,
+                R.drawable.p06,
+                R.drawable.p07,
+                R.drawable.p08,
+                R.drawable.p01
+        };
+
+        int i = 7;
+
+        if(mbrID > 0) {
+            i = (mbrID - 1) % 7;
+        }
+        this.mbrIconIdx = pics[i];
         return(this);
     }
 
@@ -272,7 +289,7 @@ public class DbHelper {
         addFriend(1,3);
         addFriend(1,4);
         addFriend(2,3);
-        addFriend(3,4);
+        // addFriend(3,4);
 
         // add chatMsgTable
         // when login , create channel, implememt in login
