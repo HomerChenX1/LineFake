@@ -104,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
             // mAuthTask = new UserLoginTask(email, password);
             // mAuthTask.execute((Void) null);
             showProgress(false);
+            Intent intent = new Intent(this, InfoActivity.class);
+            startActivity(intent);
         }
     }
 

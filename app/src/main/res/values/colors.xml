@@ -5,6 +5,9 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorBtnSolid">#FFFFE0</color>
 	<color name="colorBtnBorder">#DB7093</color>
+    <color name="colorBG1">#ffe7ab</color>
+    <color name="colorBG2">#DDDDFF</color>
+    <color name="colorBG3">#c0e3cc</color>
 </resources>
 
 
