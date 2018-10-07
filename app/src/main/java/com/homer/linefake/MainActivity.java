@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private ProgressBar vProgress;
@@ -80,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         if(temp==0) {
             temp = Member.isPasswordValid(password);
             if (temp != 0) {
-                // vPassword.setError(getString(R.string.error_invalid_password));
                 vFocus = vPassword;
                 cancel = true;
             }
@@ -101,12 +101,34 @@ public class MainActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            vMessages.setText("Password:" + email + "." + password);
-            // mAuthTask = new UserLoginTask(email, password);
-            // mAuthTask.execute((Void) null);
+            vMessages.setText("Password:" + email + "." + password + "\n");
+            DbHelper.guest.setMbrPassword(password).setMbrEmail(email);
+            int x = DbHelper.getInstance().doEmailLogin(DbHelper.guest);
+            // vMessages.setText("Password:" + email + "." + password + "\n");
+            StringBuilder sb = new StringBuilder();
+            sb.append("ID:").append(DbHelper.guest.getMbrID()).append(" ICON:").append(DbHelper.guest.getMbrIconIdx())
+                    .append(" Alias:").append(DbHelper.guest.getMbrAlias()).append(" Phone:").append(DbHelper.guest.getMbrPhone())
+                    .append(" EMail:").append(DbHelper.guest.getMbrEmail()).append(" Pwd:").append(DbHelper.guest.getMbrPassword());
+            vMessages.setText(sb.toString());
             showProgress(false);
-            Intent intent = new Intent(this, InfoActivity.class);
-            startActivity(intent);
+            switch(x){
+                case 1:
+                    Toast.makeText(this,"E-Mail not found !",Toast.LENGTH_LONG).show();
+                    vEmail.setError(getString(R.string.error_not_exist_email));
+                    vEmail.requestFocus();
+                    break;
+                case 2:
+                    Toast.makeText(this,"wrong PWD !",Toast.LENGTH_LONG).show();
+                    vPassword.setError(getString(R.string.error_incorrect_password));
+                    vPassword.requestFocus();
+                    break;
+                default:
+                    DbHelper.guest.copyTo(DbHelper.owner);
+                    //Toast.makeText(this,"Login success!" + R.drawable.p02 ,Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(this, InfoActivity.class);
+                    startActivity(intent);
+            }
+
         }
     }
 
@@ -118,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickRegister(View view){
         Intent intent = new Intent(this, MemberActivity.class);
+        intent.putExtra("member_mode",0);
         startActivity(intent);
     }
 }

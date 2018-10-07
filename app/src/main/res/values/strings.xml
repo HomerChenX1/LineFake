@@ -8,6 +8,7 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_delete">Delete</string>
     <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_not_exist_email">This email address is not existed</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>

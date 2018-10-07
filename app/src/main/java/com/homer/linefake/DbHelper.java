@@ -26,7 +26,8 @@ class Member {
     }
 
     public int getMbrIconIdx() { return mbrIconIdx; }
-    public Member setMbrIconIdx(int mbrIconIdx) {
+    // public Member setMbrIconIdx(int mbrIconIdx) {
+    public Member setMbrIconIdx() {
         // mbrIconIdx is not used
         int [] pics = {
                 R.drawable.p02,
@@ -83,7 +84,7 @@ class Member {
 
     public void copyTo(Member x){
         x.setMbrID(mbrID);
-        x.setMbrIconIdx(mbrIconIdx);
+        x.setMbrIconIdx();
         x.setMbrAlias(mbrAlias);
         x.setMbrPhone(mbrPhone);
         x.setMbrEmail(mbrEmail);
@@ -265,22 +266,22 @@ public class DbHelper {
         // channel is internal use, create when channel is opened (master and owner)
         //  add memberTable
         Member x = new Member();
-        x.setMbrID(1).setMbrAlias("admin").setMbrEmail("admin@null.com")
+        x.setMbrID(1).setMbrIconIdx().setMbrAlias("admin").setMbrEmail("admin@null.com")
                 .setMbrPassword("111111").setMbrPhone("0111111");
         addMember(x);
 
         x = new Member();
-        x.setMbrID(2).setMbrAlias("owner").setMbrEmail("owner@null.com")
+        x.setMbrID(2).setMbrIconIdx().setMbrAlias("owner").setMbrEmail("owner@null.com")
                 .setMbrPassword("222222").setMbrPhone("0222222");
         addMember(x);
 
         x = new Member();
-        x.setMbrID(3).setMbrAlias("master").setMbrEmail("master@null.com")
+        x.setMbrID(3).setMbrIconIdx().setMbrAlias("master").setMbrEmail("master@null.com")
                 .setMbrPassword("333333").setMbrPhone("0333333");
         addMember(x);
 
         x = new Member();
-        x.setMbrID(4).setMbrAlias("guest").setMbrEmail("guest@null.com")
+        x.setMbrID(4).setMbrIconIdx().setMbrAlias("guest").setMbrEmail("guest@null.com")
                 .setMbrPassword("444444").setMbrPhone("0444444");
         addMember(x);
 
@@ -294,6 +295,21 @@ public class DbHelper {
         // add chatMsgTable
         // when login , create channel, implememt in login
 
+    }
+
+    int doEmailLogin(Member obj){
+        String objEmail = obj.getMbrEmail();
+        int idx = 0;
+        for(idx = 0; idx < memberTable.size() ;idx++){
+            if(memberTable.get(idx).getMbrEmail().equals(objEmail))
+                break;
+        }
+        if(idx >= memberTable.size())
+            return 1; // not found
+        if(memberTable.get(idx).getMbrPassword().equals(obj.getMbrPassword()))
+            memberTable.get(idx).copyTo(obj);
+        else return 2; // pwd is incorrect
+        return 0;
     }
 
 }

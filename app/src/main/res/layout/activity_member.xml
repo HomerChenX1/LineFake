@@ -8,13 +8,13 @@
     tools:context=".MemberActivity">
 
     <TextView
+        android:id="@+id/mbr_messages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/mbr_messages"
-        android:text="Hello World!"
         android:background="#DDDDFF"
         android:lines="5"
-        android:visibility="gone" />
+        android:text="Hello World!"
+        android:visibility="visible" />
 
     <ScrollView
         android:layout_width="match_parent"

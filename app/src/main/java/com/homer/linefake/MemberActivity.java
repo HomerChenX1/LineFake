@@ -1,5 +1,6 @@
 package com.homer.linefake;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +14,7 @@ public class MemberActivity extends AppCompatActivity {
     private EditText vPhone;
     private EditText vEmail;
     private EditText vPassword;
+    private int mode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +22,10 @@ public class MemberActivity extends AppCompatActivity {
         setContentView(R.layout.activity_member);
         setTitle(getString(R.string.app_name) + ": Member");
         findViews();
+        Intent intent = getIntent();
+        mode = intent.getIntExtra("member_mode", -1);
+        vMessages.setText("mode is:" + mode);
+
     }
     private void findViews() {
         vMessages = findViewById(R.id.mbr_messages); // copied

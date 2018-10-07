@@ -16,10 +16,11 @@
         android:lines="3" />
 
     <LinearLayout
+        android:id="@+id/info_update"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorBG1"
-        android:orientation="horizontal">
+        android:orientation="horizontal" >
 
         <ImageView
             android:id="@+id/info_icon"
@@ -33,8 +34,8 @@
             android:id="@+id/info_alias"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textStyle="bold"
-            android:text="@string/xml_textview2" />
+            android:text="@string/xml_textview2"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
