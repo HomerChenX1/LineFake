@@ -34,7 +34,9 @@ public class MainActivity extends AppCompatActivity {
         findViews();
         vMessages.setText(eMailAutoList[0]+"\n"+eMailAutoList[1]+"\n"+eMailAutoList[2]+"\n"+eMailAutoList[3]);
         DbHelper.getInstance().initDbHelper();
+        // showProgress(false);
     }
+
     private void findViews() {
         vProgress = findViewById(R.id.login_progress);
 
@@ -101,14 +103,15 @@ public class MainActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            vMessages.setText("Password:" + email + "." + password + "\n");
+            // vMessages.setText("Password:" + email + "." + password + "\n");
             DbHelper.guest.setMbrPassword(password).setMbrEmail(email);
             int x = DbHelper.getInstance().doEmailLogin(DbHelper.guest);
             // vMessages.setText("Password:" + email + "." + password + "\n");
             StringBuilder sb = new StringBuilder();
             sb.append("ID:").append(DbHelper.guest.getMbrID()).append(" ICON:").append(DbHelper.guest.getMbrIconIdx())
                     .append(" Alias:").append(DbHelper.guest.getMbrAlias()).append(" Phone:").append(DbHelper.guest.getMbrPhone())
-                    .append(" EMail:").append(DbHelper.guest.getMbrEmail()).append(" Pwd:").append(DbHelper.guest.getMbrPassword());
+                    .append(" EMail:").append(DbHelper.guest.getMbrEmail()).append(" Pwd:").append(DbHelper.guest.getMbrPassword())
+                    .append("owner friends:").append(DbHelper.owner.getFriendSet().length);
             vMessages.setText(sb.toString());
             showProgress(false);
             switch(x){
@@ -123,12 +126,11 @@ public class MainActivity extends AppCompatActivity {
                     vPassword.requestFocus();
                     break;
                 default:
-                    DbHelper.guest.copyTo(DbHelper.owner);
+                    // DbHelper.guest.copyTo(DbHelper.owner);
                     //Toast.makeText(this,"Login success!" + R.drawable.p02 ,Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(this, InfoActivity.class);
                     startActivity(intent);
             }
-
         }
     }
 

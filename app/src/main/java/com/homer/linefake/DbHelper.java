@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -124,9 +125,9 @@ class Member {
 class MemberWithFriend extends Member {
     private Set<Integer> friendSet = new HashSet<>();
 
-    public Set<Integer> getFriendSet() { return friendSet; }
-    public Member setFriendSet(Set<Integer> friendSet) {
-        this.friendSet = friendSet;
+    public Integer[] getFriendSet() { return friendSet.toArray(new Integer[friendSet.size()]); }
+    public Member setFriendSet(Integer x) {
+        this.friendSet.add(x);
         return this;
     }
 }
@@ -309,7 +310,14 @@ public class DbHelper {
         if(memberTable.get(idx).getMbrPassword().equals(obj.getMbrPassword()))
             memberTable.get(idx).copyTo(obj);
         else return 2; // pwd is incorrect
+        obj.copyTo(owner);
+        // build owner.friendSet from friendTable
+        int src = owner.getMbrID();
+        for(Integer [] x : friendTable){
+            if(src == x[0]){
+                owner.setFriendSet(x[1]);
+            }
+        }
         return 0;
     }
-
 }
