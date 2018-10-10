@@ -185,6 +185,7 @@ class ChatMsg {
 }
 public class DbHelper {
     public static MemberWithFriend owner = new MemberWithFriend();
+    public static ArrayList<Member> friendList = new ArrayList<>(); // gather info from friendSet
     public static Member master = new Member();
     public static Member guest = new Member();
     private ArrayList<Member> memberTable = new ArrayList<>();
@@ -203,6 +204,17 @@ public class DbHelper {
         return ourInstance;
     }
     void addMember(Member x){ memberTable.add(x); }
+
+    Member queryMemberById(int memberId){
+        Member m = new Member();
+        for(Member x : memberTable){
+            if(x.getMbrID() == memberId){
+                x.copyTo(m);
+                break;
+            }
+        }
+        return m;
+    }
 
     void updateMember(Member input){
         int memberId = input.getMbrID();
@@ -318,6 +330,13 @@ public class DbHelper {
                 owner.setFriendSet(x[1]);
             }
         }
+        if(owner.getFriendSet().length!=0) genFriendList();
         return 0;
+    }
+
+    void genFriendList(){
+        for(int id : owner.getFriendSet()){
+            friendList.add(queryMemberById(id));
+        }
     }
 }

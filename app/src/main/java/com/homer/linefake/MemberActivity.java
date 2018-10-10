@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -14,6 +15,8 @@ public class MemberActivity extends AppCompatActivity {
     private EditText vPhone;
     private EditText vEmail;
     private EditText vPassword;
+    private Button vRegisterBtn;
+    private Button vDeleteBtn;
     private int mode;
 
     @Override
@@ -25,7 +28,19 @@ public class MemberActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mode = intent.getIntExtra("member_mode", -1);
         vMessages.setText("mode is:" + mode);
-
+        if(mode == 1){
+            // update mode vAlias vPhone vEmail vPassword
+            vId.setText(getString(R.string.prompt_id) + ":" + String.valueOf(DbHelper.owner.getMbrID()));
+            vAlias.setText(DbHelper.owner.getMbrAlias());
+            vPhone.setText(DbHelper.owner.getMbrPhone());
+            vEmail.setText(DbHelper.owner.getMbrEmail());
+            vPassword.setText(DbHelper.owner.getMbrPassword());
+            vRegisterBtn.setText(getString(R.string.action_update));
+        }
+        else
+        {
+            vDeleteBtn.setVisibility(View.GONE);
+        }
     }
     private void findViews() {
         vMessages = findViewById(R.id.mbr_messages); // copied
@@ -34,6 +49,8 @@ public class MemberActivity extends AppCompatActivity {
         vPhone = findViewById(R.id.mbr_phone);
         vEmail = findViewById(R.id.mbr_email);  // copied
         vPassword = findViewById(R.id.mbr_password); // copied
+        vRegisterBtn = findViewById(R.id.mbr_register_btn);
+        vDeleteBtn = findViewById(R.id.mbr_delete_btn);
     }
     // mbr_register_btn
     public void onClickMbrRegister(View view){
@@ -135,12 +152,11 @@ public class MemberActivity extends AppCompatActivity {
     }
     // mbr_cancel_btn
     public void onClickMbrCancel(View view){
-        vMessages.setText("");
-        vId.setText("");
-        vAlias.setText("");
-        vPhone.setText("");
-        vEmail.setText("");
-        vPassword.setText("");
+        vId.setText(mode == 1 ? getString(R.string.prompt_id) + ":" + String.valueOf(DbHelper.owner.getMbrID()) : "");
+        vAlias.setText(mode == 1 ? DbHelper.owner.getMbrAlias() : "");
+        vPhone.setText(mode == 1 ? DbHelper.owner.getMbrPhone() : "");
+        vEmail.setText(mode == 1 ? DbHelper.owner.getMbrEmail() : "");
+        vPassword.setText(mode == 1 ? DbHelper.owner.getMbrPassword() : "");
     }
     // when register mode, no delete button
     public void onClickMbrDelete(View view){

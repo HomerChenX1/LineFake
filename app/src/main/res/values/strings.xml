@@ -5,6 +5,7 @@
     <string name="prompt_password">Password (6 digits needed at least)</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_register">Register</string>
+    <string name="action_update">Update</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_delete">Delete</string>
     <string name="error_invalid_email">This email address is invalid</string>
