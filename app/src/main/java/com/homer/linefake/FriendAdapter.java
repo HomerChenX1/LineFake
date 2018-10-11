@@ -13,6 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class FriendAdapter extends BaseAdapter {
@@ -23,6 +24,11 @@ class FriendAdapter extends BaseAdapter {
     FriendAdapter(Context context, List<Member> memberList) {
         this.context = context;
         this.memberList = memberList;
+    }
+
+    public void refresh(ArrayList<Member> list) {
+        memberList = list;
+        notifyDataSetChanged();
     }
 
     @Override

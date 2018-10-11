@@ -130,6 +130,9 @@ class MemberWithFriend extends Member {
         this.friendSet.add(x);
         return this;
     }
+    public int getFriendSetSize(){
+        return friendSet.size();
+    }
 }
 
 class ChatMsg {
@@ -325,12 +328,14 @@ public class DbHelper {
         obj.copyTo(owner);
         // build owner.friendSet from friendTable
         int src = owner.getMbrID();
-        for(Integer [] x : friendTable){
-            if(src == x[0]){
-                owner.setFriendSet(x[1]);
+        if(owner.getFriendSetSize() == 0) {
+            for (Integer[] x : friendTable) {
+                if (src == x[0]) {
+                    owner.setFriendSet(x[1]);
+                }
             }
+            if (owner.getFriendSet().length != 0) genFriendList();
         }
-        if(owner.getFriendSet().length!=0) genFriendList();
         return 0;
     }
 

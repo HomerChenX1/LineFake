@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -19,6 +20,7 @@ public class InfoActivity extends AppCompatActivity {
     private TextView vAlias;
     private Button vFriendTools;
     private ListView vFriendSet;
+    private FriendAdapter friendAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +52,31 @@ public class InfoActivity extends AppCompatActivity {
         vFriendTools = findViewById(R.id.info_friend_tools);
 
         vFriendSet = findViewById(R.id.info_friend_set);
-        vFriendSet.setAdapter(new FriendAdapter(this, DbHelper.friendList));
+        friendAdapter = new FriendAdapter(this, DbHelper.friendList);
+        vFriendSet.setAdapter(friendAdapter);
+        vFriendSet.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // to do
+                Member member = (Member) parent.getItemAtPosition(position);
+                String text = member.getMbrAlias();
+                //Toast.makeText(InfoActivity.this, text, Toast.LENGTH_SHORT).show();
+                Toast.makeText(view.getContext(), text, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(view.getContext(), ChannelActivity.class);
+                startActivity(intent);
+            }
+        });
+        vFriendSet.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view,int position, long id) {
+                // to do
+                Member member = (Member) parent.getItemAtPosition(position);
+                String text = member.getMbrEmail();
+                Toast.makeText(view.getContext(), text, Toast.LENGTH_SHORT).show();
+                // true 表示不再丟給 onItemClick 處理，false 則會再執行 onItemClick，如果有的話
+                return true;
+            }
+        });
     }
 
     public void onClickFriendTools(View view){
@@ -60,10 +86,14 @@ public class InfoActivity extends AppCompatActivity {
 
     @Override
     protected void onRestart() {
+        // for backpress button
         super.onRestart();
         Toast.makeText(this,"onRestart wakeup!" ,Toast.LENGTH_LONG).show();
-        vIcon.invalidate();
-        vAlias.invalidate();
-        vFriendSet.invalidate();
+        vIcon.setImageResource(DbHelper.owner.getMbrIconIdx());
+        vAlias.setText(DbHelper.owner.getMbrAlias());
+        friendAdapter.refresh(DbHelper.friendList);
+        // vIcon.invalidate();
+        // vAlias.invalidate();
+        // vFriendSet.invalidate();
     }
 }
