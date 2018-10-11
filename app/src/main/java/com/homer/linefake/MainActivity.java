@@ -5,6 +5,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -139,6 +140,28 @@ public class MainActivity extends AppCompatActivity {
         // others must be hidden
         // mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
     }
+
+    @Override
+    protected void onRestart() {
+        // for backpress button, keep login empty
+        super.onRestart();
+        Toast.makeText(this,"onRestart wakeup!" ,Toast.LENGTH_LONG).show();
+        vEmail.setText("");
+        vPassword.setText("");
+        vMessages.setText("");
+        vEmail.requestFocus();
+    }
+
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event)
+//    {
+//        if ((keyCode == KeyEvent.KEYCODE_BACK))
+//        {
+//            return false;
+//        }
+//        return super.onKeyDown(keyCode, event);
+//    }
+
 
     public void onClickRegister(View view){
         Intent intent = new Intent(this, MemberActivity.class);

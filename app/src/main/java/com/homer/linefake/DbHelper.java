@@ -133,6 +133,7 @@ class MemberWithFriend extends Member {
     public int getFriendSetSize(){
         return friendSet.size();
     }
+    public void clearFriendSet(){ friendSet.clear();}
 }
 
 class ChatMsg {
@@ -189,12 +190,13 @@ class ChatMsg {
 public class DbHelper {
     public static MemberWithFriend owner = new MemberWithFriend();
     public static ArrayList<Member> friendList = new ArrayList<>(); // gather info from friendSet
+    public static ArrayList<ChatMsg> channel = new ArrayList<>(); // only contains ChatMsg between owner and master
     public static Member master = new Member();
     public static Member guest = new Member();
     private ArrayList<Member> memberTable = new ArrayList<>();
     private ArrayList<Integer []> friendTable = new ArrayList<>();
     private ArrayList<ChatMsg> chatMsgTable = new ArrayList<>();
-    private ArrayList<ChatMsg> channel = new ArrayList<>(); // only contains ChatMsg between owner and master
+
 
     private static DbHelper ourInstance;
 
@@ -327,15 +329,17 @@ public class DbHelper {
         else return 2; // pwd is incorrect
         obj.copyTo(owner);
         // build owner.friendSet from friendTable
+        owner.clearFriendSet(); // for backpress error
+        friendList.clear();
+        channel.clear();
+
         int src = owner.getMbrID();
-        if(owner.getFriendSetSize() == 0) {
-            for (Integer[] x : friendTable) {
-                if (src == x[0]) {
-                    owner.setFriendSet(x[1]);
-                }
+        for (Integer[] x : friendTable) {
+            if (src == x[0]) {
+                owner.setFriendSet(x[1]);
             }
-            if (owner.getFriendSet().length != 0) genFriendList();
         }
+        if (owner.getFriendSet().length != 0) genFriendList();
         return 0;
     }
 
