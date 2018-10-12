@@ -155,19 +155,23 @@ public class MemberActivity extends AppCompatActivity {
                     .append(" EMail:").append(DbHelper.owner.getMbrEmail()).append(" Pwd:").append(DbHelper.owner.getMbrPassword())
                     .append(" Owner friends:").append(DbHelper.owner.getFriendSet().length);
             vMessages.setText(sb.toString());
-//            if(mode == 0){
-//                // mode == 0 register, add owner to memberTable,  friendTable with admin, delete owner.ID = 0 , to login
-            // use intent will generate backpress error
-            // jump to the bottom activity will induced backpress error
-//                Intent intent = new Intent(this, MainActivity.class);
-//                startActivity(intent);
-//            }
-//            else{
-//                // mode == 1 update, up owner to memberTable
-            // jump to the bottom activity will induced backpress error
-//                Intent intent = new Intent(this, InfoActivity.class);
-//                startActivity(intent);
-//            }
+            if(mode == 0){
+                // mode == 0 register, add owner to memberTable,  friendTable with admin, delete owner.ID = 0 , to login
+                //use intent will generate backpress error
+                //jump to the bottom activity will induced backpress error
+                //Intent intent = new Intent(this, MainActivity.class);
+                //startActivity(intent);
+                //Toast.makeText(view.getContext(), String.valueOf(DbHelper.getInstance().generateMbrID()), Toast.LENGTH_LONG).show();
+                DbHelper.getInstance().registerMember(DbHelper.owner);
+                // DbHelper.owner.setMbrID(0); do not add this for multiple update
+            }
+            else{
+                // mode == 1 update, up owner to memberTable
+                DbHelper.getInstance().updateMember(DbHelper.owner);
+                // jump to the bottom activity will induced backpress error
+                //Intent intent = new Intent(this, InfoActivity.class);
+                //startActivity(intent);
+            }
         }
 
     }

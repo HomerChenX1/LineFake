@@ -1,6 +1,7 @@
 package com.homer.linefake;
 
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -240,6 +241,8 @@ public class DbHelper {
         }
     }
 
+    int generateMbrID(){ return memberTable.size() + 1; }
+
     void addFriend(int ownerId, int masterId){
         Integer [] x1 = { ownerId, masterId};
         Integer [] x2 = { masterId, ownerId };
@@ -257,6 +260,7 @@ public class DbHelper {
             }
         }
     }
+
     void addChat(ChatMsg x){ chatMsgTable.add(x); }
 
     void deleteChat(int chatId){
@@ -347,5 +351,16 @@ public class DbHelper {
         for(int id : owner.getFriendSet()){
             friendList.add(queryMemberById(id));
         }
+    }
+    void registerMember(Member input){
+        // add to memberTable,   delete owner.ID = 0 , to login
+        Member x = new Member();
+        input.copyTo(x);
+        // generate Member ID
+        int idx = generateMbrID();
+        x.setMbrID(idx).setMbrIconIdx();
+        addMember(x);
+        // friendTable with admin,
+        addFriend(1,idx);
     }
 }

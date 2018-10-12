@@ -50,7 +50,7 @@ class FriendAdapter extends BaseAdapter {
 
         TextView tvId = (TextView) itemView
                 .findViewById(R.id.friend_item_id);
-        tvId.setText(String.valueOf(member.getMbrID()));
+        tvId.setText("ID:" + String.valueOf(member.getMbrID()));
 
         TextView tvName = (TextView) itemView
                 .findViewById(R.id.friend_item_alias);
@@ -58,7 +58,7 @@ class FriendAdapter extends BaseAdapter {
 
         TextView tvPhone = (TextView) itemView
                 .findViewById(R.id.friend_item_phone);
-        tvPhone.setText(member.getMbrPhone());
+        tvPhone.setText("Ph:" + member.getMbrPhone());
         return itemView;
     }
 
