@@ -1,8 +1,12 @@
 package com.homer.linefake;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -184,8 +188,15 @@ public class MemberActivity extends AppCompatActivity {
         // channel clear
         // owner.friendset clear
         // delete owner.ID = 0 master.ID = 0
+
         // jump to the bottom activity will induced backpress error
-//        Intent intent = new Intent(MemberActivity.this, MainActivity.class);
-//        startActivity(intent);
+        // restart the application
+        restart();
+    }
+    void restart(){
+        Intent i = getBaseContext().getPackageManager()
+                .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(i);
     }
 }
