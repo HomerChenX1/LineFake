@@ -148,7 +148,7 @@ public class MemberActivity extends AppCompatActivity {
             vFocus.requestFocus();
         } else {
             // perform the user register/update attempt.
-            vMessages.setText("start line 144");
+            // vMessages.setText("start line 144");
             StringBuilder sb = new StringBuilder();
             sb.append("ID:").append(DbHelper.owner.getMbrID()).append(" ICON:").append(DbHelper.owner.getMbrIconIdx())
                     .append(" Alias:").append(DbHelper.owner.getMbrAlias()).append(" Phone:").append(DbHelper.owner.getMbrPhone())
@@ -159,8 +159,6 @@ public class MemberActivity extends AppCompatActivity {
                 // mode == 0 register, add owner to memberTable,  friendTable with admin, delete owner.ID = 0 , to login
                 //use intent will generate backpress error
                 //jump to the bottom activity will induced backpress error
-                //Intent intent = new Intent(this, MainActivity.class);
-                //startActivity(intent);
                 //Toast.makeText(view.getContext(), String.valueOf(DbHelper.getInstance().generateMbrID()), Toast.LENGTH_LONG).show();
                 DbHelper.getInstance().registerMember(DbHelper.owner);
                 // DbHelper.owner.setMbrID(0); do not add this for multiple update
@@ -168,9 +166,6 @@ public class MemberActivity extends AppCompatActivity {
             else{
                 // mode == 1 update, up owner to memberTable
                 DbHelper.getInstance().updateMember(DbHelper.owner);
-                // jump to the bottom activity will induced backpress error
-                //Intent intent = new Intent(this, InfoActivity.class);
-                //startActivity(intent);
             }
         }
 
@@ -186,15 +181,13 @@ public class MemberActivity extends AppCompatActivity {
     }
     // when register mode, no delete button
     public void onClickMbrDelete(View view){
-        // delete memberTable by owner.ID
-        // delete friendTable by owner.ID  ID[0],ID[1]
-        // delete chatMsgTable by owner.ID IDfrom IDto
-        // channel clear
-        // owner.friendset clear
-        // delete owner.ID = 0 master.ID = 0
+        // need delete chat
 
         // jump to the bottom activity will induced backpress error
         // restart the application
+        DbHelper.getInstance().deleteOwner();
+        // int retv = DbHelper.getInstance().deleteFriend(owner.getMbrID(),1);
+        Toast.makeText(view.getContext(), "Need check in SQLite", Toast.LENGTH_LONG).show();
         restart();
     }
     void restart(){

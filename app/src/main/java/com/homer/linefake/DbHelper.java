@@ -250,15 +250,20 @@ public class DbHelper {
         friendTable.add(x2);
     }
 
-    void deleteFriend(int ownerId, int masterId){
-        for(Integer [] x : friendTable){
-            if((x[0] == ownerId) && (x[1] == masterId)){
-                friendTable.remove(x);
+    int deleteFriend(int ownerId, int masterId) {
+        ArrayList<Integer [] > items = new ArrayList<>();
+        for(Integer [] x : friendTable) {
+            if ((x[0] == ownerId)&& (x[1] == masterId)) {
+                items.add(x);
             }
-            if((x[1] == ownerId) && (x[0] == masterId)){
-                friendTable.remove(x);
+            if ((x[1] == ownerId)&& (x[0] == masterId)) {
+                items.add(x);
             }
         }
+        int i = friendTable.size();
+        friendTable.removeAll(items);
+        i -= friendTable.size();
+        return i;
     }
 
     void addChat(ChatMsg x){ chatMsgTable.add(x); }
@@ -362,5 +367,20 @@ public class DbHelper {
         addMember(x);
         // friendTable with admin,
         addFriend(1,idx);
+    }
+    void deleteOwner(){
+        int ID = owner.getMbrID();
+        // delete memberTable by owner.ID
+        deleteMember(ID);
+        // delete friendTable by owner.ID
+        for(int i : owner.getFriendSet()){
+            deleteFriend(ID, i);
+        }
+        // owner.friendset clear
+        owner.clearFriendSet();
+        // delete chatMsgTable by owner.ID IDfrom IDto
+        // channel clear
+        // delete owner.ID = 0 master.ID = 0
+        owner.setMbrID(0);
     }
 }
