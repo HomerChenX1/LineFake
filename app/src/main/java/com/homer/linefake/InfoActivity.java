@@ -59,24 +59,24 @@ public class InfoActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // to do
                 Member member = (Member) parent.getItemAtPosition(position);
-                String text = member.getMbrAlias();
-                //Toast.makeText(InfoActivity.this, text, Toast.LENGTH_SHORT).show();
-                Toast.makeText(view.getContext(), text, Toast.LENGTH_SHORT).show();
+                // String text = member.getMbrAlias();
+                // Toast.makeText(view.getContext(), text, Toast.LENGTH_SHORT).show();
+                member.copyTo(DbHelper.master);
                 Intent intent = new Intent(view.getContext(), ChannelActivity.class);
                 startActivity(intent);
             }
         });
-        vFriendSet.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view,int position, long id) {
-                // to do
-                Member member = (Member) parent.getItemAtPosition(position);
-                String text = member.getMbrEmail();
-                Toast.makeText(view.getContext(), text, Toast.LENGTH_SHORT).show();
-                // true 表示不再丟給 onItemClick 處理，false 則會再執行 onItemClick，如果有的話
-                return true;
-            }
-        });
+//        vFriendSet.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> parent, View view,int position, long id) {
+//                // to do
+//                Member member = (Member) parent.getItemAtPosition(position);
+//                String text = member.getMbrEmail();
+//                Toast.makeText(view.getContext(), text, Toast.LENGTH_SHORT).show();
+//                // true 表示不再丟給 onItemClick 處理，false 則會再執行 onItemClick，如果有的話
+//                return true;
+//            }
+//        });
     }
 
     public void onClickFriendTools(View view){

@@ -26,7 +26,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="@string/prompt_id"
+            android:hint="@string/prompt_friend_id"
+            android:layout_weight="3"
             android:inputType="numberDecimal" />
 
         <Button
@@ -34,10 +35,10 @@
             style="?android:textAppearanceSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
+            android:layout_weight="1"
             android:textStyle="bold"
             android:background="@drawable/button_round"
-            android:text="@string/xml_btn1" />
+            android:text="@string/action_friend_id" />
     </LinearLayout>
 
     <LinearLayout
@@ -51,7 +52,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="@string/prompt_email"
+            android:hint="@string/prompt_friend_email"
+            android:layout_weight="3"
             android:inputType="textEmailAddress" />
 
         <Button
@@ -61,8 +63,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:textStyle="bold"
+            android:layout_weight="1"
             android:background="@drawable/button_round"
-            android:text="@string/xml_btn1" />
+            android:text="@string/action_friend_email" />
 
     </LinearLayout>
 
@@ -70,7 +73,7 @@
         android:id="@+id/friends_search_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="3"
+        android:layout_weight="1"
         android:background="@color/colorBG3" />
 
     <TextView
@@ -79,7 +82,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorBG2"
         android:gravity="center"
-        android:text="@string/xml_textview"
+        android:text="@string/action_friend_list_title"
         android:textStyle="bold" />
 
     <ListView

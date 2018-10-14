@@ -121,6 +121,16 @@ class Member {
         return 0;
     }
 
+    @Override
+    public String toString() {
+        return "Member{" +
+                "mbrID=" + mbrID +
+                ", mbrAlias='" + mbrAlias + '\'' +
+                ", mbrPhone='" + mbrPhone + '\'' +
+                ", mbrEmail='" + mbrEmail + '\'' +
+                ", mbrPassword='" + mbrPassword + '\'' +
+                '}';
+    }
 }
 
 class MemberWithFriend extends Member {
