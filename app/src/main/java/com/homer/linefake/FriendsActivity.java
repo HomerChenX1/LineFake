@@ -2,6 +2,8 @@ package com.homer.linefake;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -27,15 +29,35 @@ public class FriendsActivity extends AppCompatActivity {
         vFriendSet = findViewById(R.id.friends_set_list);
         friendAdapter = new FriendAdapter(this, DbHelper.friendList);
         vFriendSet.setAdapter(friendAdapter);
-        vFriendSet.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // to do
-                Member member = (Member) parent.getItemAtPosition(position);
-                String text = member.getMbrAlias();
-                Toast.makeText(view.getContext(), text, Toast.LENGTH_SHORT).show();
-                // use content menu or popup menu
-            }
-        });
+
+        registerForContextMenu(vFriendSet);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo); // ??? in front or return
+        if (v == vFriendSet) {
+            menu.setHeaderIcon(R.mipmap.ic_launcher);
+            menu.setHeaderTitle("Action：");
+            //參數1:群組id, 參數2:itemId, 參數3:item順序, 參數4:item名稱
+            menu.add(0, 0, 0, getString(R.string.action_friend_id));
+            menu.add(0, 1, 0, getString(R.string.action_friend_delete));
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo menuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case 0:
+                Toast.makeText(this, "menuInfo.position:" + menuInfo.position + " Add", Toast.LENGTH_SHORT).show();
+                break;
+            case 1:
+                Toast.makeText(this, "menuInfo.position:" + menuInfo.position + " Del", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                break;
+        }
+        return super.onContextItemSelected(item);
     }
 }

@@ -24,6 +24,7 @@
     <string name="prompt_friend_id">Add a friend by ID</string>
     <string name="prompt_friend_email">Search an e-mail to add</string>
     <string name="action_friend_id">Add</string>
+    <string name="action_friend_delete">Delete</string>
     <string name="action_friend_email">Search</string>
     <string name="action_friend_list_title">"Friends' List"</string>
 </resources>
