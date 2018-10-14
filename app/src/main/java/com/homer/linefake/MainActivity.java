@@ -152,17 +152,6 @@ public class MainActivity extends AppCompatActivity {
         vEmail.requestFocus();
     }
 
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event)
-//    {
-//        if ((keyCode == KeyEvent.KEYCODE_BACK))
-//        {
-//            return false;
-//        }
-//        return super.onKeyDown(keyCode, event);
-//    }
-
-
     public void onClickRegister(View view){
         Intent intent = new Intent(this, MemberActivity.class);
         intent.putExtra("member_mode",0);

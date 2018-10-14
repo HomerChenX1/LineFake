@@ -51,6 +51,15 @@
         android:onClick="onClickFriendTools"
         android:text="@string/xml_btn1" />
 
+    <TextView
+        android:id="@+id/info_friend_set_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorBG2"
+        android:gravity="center"
+        android:text="@string/xml_friend_list_title"
+        android:textStyle="bold" />
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

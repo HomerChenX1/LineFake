@@ -145,6 +145,7 @@ class MemberWithFriend extends Member {
         return friendSet.size();
     }
     public void clearFriendSet(){ friendSet.clear();}
+    public void deleteFriendSet(Integer x){ friendSet.remove(x);}
 }
 
 class ChatMsg {
@@ -223,6 +224,7 @@ public class DbHelper {
 
     Member queryMemberById(int memberId){
         Member m = new Member();
+        m.setMbrID(-1);
         for(Member x : memberTable){
             if(x.getMbrID() == memberId){
                 x.copyTo(m);
@@ -230,6 +232,18 @@ public class DbHelper {
             }
         }
         return m;
+    }
+
+    ArrayList<Member> queryMemberByEmail(String partEmail){
+        ArrayList<Member> mList = new ArrayList<>();
+        for(Member x : memberTable){
+            if(x.getMbrEmail().contains(partEmail)){
+                Member m = new Member();
+                x.copyTo(m);
+                mList.add(m);
+            }
+        }
+        return mList;
     }
 
     void updateMember(Member input){
@@ -367,6 +381,28 @@ public class DbHelper {
             friendList.add(queryMemberById(id));
         }
     }
+    Member queryFriendListById(int memberId){
+        Member m = new Member();
+        for(Member x : friendList){
+            if(x.getMbrID() == memberId){
+                x.copyTo(m);
+                break;
+            }
+        }
+        return m;
+    }
+    int deleteFriendList(int memberId){
+        ArrayList<Member> items = new ArrayList<>();
+        for(Member x : friendList){
+            if(x.getMbrID() == memberId){
+                items.add(x);
+            }
+        }
+        // int i = items.size();
+        friendList.removeAll(items);
+        return friendList.size();
+    }
+
     void registerMember(Member input){
         // add to memberTable,   delete owner.ID = 0 , to login
         Member x = new Member();
@@ -392,5 +428,38 @@ public class DbHelper {
         // channel clear
         // delete owner.ID = 0 master.ID = 0
         owner.setMbrID(0);
+    }
+    int deleteFriendOfOwner(int memberId){
+        // delete member.id from   friendTable -> owner.friendset -> friendList
+        int i = owner.getFriendSetSize();
+        //  delete owner.friendSet
+        owner.deleteFriendSet(memberId);
+        i -= owner.getFriendSetSize();
+        if(i > 0){
+            // memberId existed in friendset
+            // del friendList
+            i = deleteFriendList(memberId);
+            // del friendTable
+            i = deleteFriend(owner.getMbrID(),memberId);
+        }
+        return i;
+    }
+    int addFriendOfOwner(int memberId) {
+        // id exist?
+        Member m = queryMemberById(memberId);
+        if(m.getMbrID() == memberId) {
+            // exist,
+            // if exist in friendSet?
+            int i = owner.getFriendSetSize();
+            // owner.friendSet -> friendList ->  friendTable
+            owner.setFriendSet(memberId);
+            if((owner.getFriendSetSize() -i) > 0){
+                // not exist in friendSet and add successful
+                friendList.add(m);
+                addFriend(owner.getMbrID(), memberId);
+                return friendList.size();
+            }
+        }
+        return 0;
     }
 }

@@ -18,8 +18,11 @@
         </activity>
         <activity android:name=".MemberActivity" />
         <activity android:name=".InfoActivity" />
-        <activity android:name=".FriendsActivity" />
-        <activity android:name=".ChannelActivity"></activity>
+        <activity android:name=".FriendsActivity"
+            android:label="@string/app_friends"/>
+        <activity android:name=".ChannelActivity"
+            android:label="@string/app_channel">
+        </activity>
     </application>
 
 </manifest>

@@ -1,30 +1,40 @@
 <resources>
     <string name="app_name">LineFake</string>
+    <string name="app_friends">LineFake:Friends</string>
+    <string name="app_channel">LineFake:Channel</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email (needed)</string>
     <string name="prompt_password">Password (6 digits needed at least)</string>
     <string name="action_sign_in">Sign in</string>
-    <string name="action_register">Register</string>
-    <string name="action_update">Update</string>
-    <string name="action_cancel">Cancel</string>
-    <string name="action_delete">Delete</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_not_exist_email">This email address is not existed</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="error_invalid_field">This content is too short</string>
+
+    <!-- Strings related to member -->
+    <string name="action_register">Register</string>
+    <string name="action_update">Update</string>
+    <string name="action_cancel">Reset data</string>
+    <string name="action_delete">Delete</string>
     <string name="prompt_id">ID</string>
     <string name="prompt_alias">Nick name(4 digits needed at least)</string>
     <string name="prompt_phone">Phone number (6 digits needed at least)</string>
+
+    <!-- Strings related to info -->
     <string name="xml_textview">Hello World!</string>
     <string name="xml_textview2">Administrator</string>
     <string name="xml_icon">"Owner's icon"</string>
     <string name="xml_btn1">"Friends' Tools"</string>
+    <string name="xml_friend_list_title">"Friends' List: short click to chat"</string>
+
+    <!-- Strings related to friends -->
     <string name="prompt_friend_id">Add a friend by ID</string>
     <string name="prompt_friend_email">Search an e-mail to add</string>
     <string name="action_friend_id">Add</string>
     <string name="action_friend_delete">Delete</string>
     <string name="action_friend_email">Search</string>
-    <string name="action_friend_list_title">"Friends' List"</string>
+    <string name="action_friend_list_title">"Friends' List: long click to select delete"</string>
+    <string name="action_friend_find_title">"Found Result's List: long click to select add"</string>
 </resources>
