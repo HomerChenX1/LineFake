@@ -37,4 +37,9 @@
     <string name="action_friend_email">Search</string>
     <string name="action_friend_list_title">"Friends' List: long click to select delete"</string>
     <string name="action_friend_find_title">"Found Result's List: long click to select add"</string>
+
+    <!-- Strings related to channel -->
+    <string name="prompt_chn_phone_call">Owner calls to master</string>
+    <string name="prompt_chn_master_chat">Message from master to owner</string>
+    <string name="prompt_chn_owner_chat">Message from owner to master</string>
 </resources>

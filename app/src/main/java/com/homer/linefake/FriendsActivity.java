@@ -2,6 +2,7 @@ package com.homer.linefake;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -101,7 +102,9 @@ public class FriendsActivity extends AppCompatActivity {
     }
     public void onClickAddById(View view){
         // Toast.makeText(this, "onClickAddById", Toast.LENGTH_SHORT).show();
-        int id = Integer.parseInt(vMsgId.getText().toString().trim());
+        String temp = vMsgId.getText().toString().trim();
+        if(TextUtils.isEmpty(temp)){ return; }
+        int id = Integer.parseInt(temp);
         int i = DbHelper.getInstance().addFriendOfOwner(id);
         Toast.makeText(this, String.valueOf(i) + ":" + " add by ID", Toast.LENGTH_SHORT).show();
         friendAdapter.refresh(DbHelper.friendList);
@@ -109,6 +112,7 @@ public class FriendsActivity extends AppCompatActivity {
     public void onClickFindByEmail(View view){
         // Toast.makeText(this, "onClickFindByEmail", Toast.LENGTH_SHORT).show();
         String partEmail = vMsgEmail.getText().toString().trim();
+        if(TextUtils.isEmpty(partEmail)){ return; }
         ArrayList<Member> mList = DbHelper.getInstance().queryMemberByEmail(partEmail);
         if(mList.size() > 0) {
             findList = mList;
