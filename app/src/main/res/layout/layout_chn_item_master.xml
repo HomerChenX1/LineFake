@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/chn_item_master_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:contentDescription="@string/xml_icon"
+        android:padding="2dp"
+        android:src="@drawable/p01" />
+
+    <TextView
+        android:id="@+id/chn_item_master_txt_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/xml_textview2"
+        android:background="@drawable/tv_round" />
+
+    <TextView
+        android:id="@+id/chn_item_master_time_start"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:text="HH:mm:ss"
+        android:textSize="12sp"
+        android:maxEms="4" />
+
+</LinearLayout>

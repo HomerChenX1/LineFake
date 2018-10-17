@@ -33,9 +33,17 @@ public class MainActivity extends AppCompatActivity {
         setTitle(getString(R.string.app_name) + ": Login");
         eMailAutoList = getResources().getStringArray(R.array.email_auto_list);
         findViews();
-        vMessages.setText(eMailAutoList[0]+"\n"+eMailAutoList[1]+"\n"+eMailAutoList[2]+"\n"+eMailAutoList[3]);
+        // vMessages.setText(eMailAutoList[0]+"\n"+eMailAutoList[1]+"\n"+eMailAutoList[2]+"\n"+eMailAutoList[3]);
+        // ChatMsg testChat = new ChatMsg(2, 1, ChatMsg.chatTypeText, "OK32!");
+        // vMessages.setText(testChat.toString());
         DbHelper.getInstance().initDbHelper();
         // showProgress(false);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        showProgress(false);
     }
 
     private void findViews() {

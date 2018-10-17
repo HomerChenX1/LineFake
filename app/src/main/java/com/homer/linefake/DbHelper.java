@@ -3,10 +3,14 @@ package com.homer.linefake;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -151,29 +155,64 @@ class MemberWithFriend extends Member {
 class ChatMsg {
     private int chatId;
     private long timeStart;
-    private long timeStop;
+    // private long timeStop;
     private int mbrIdFrom;
     private int mbrIdTo;
     private int chatType;
     private String txtMsg;
+    static final int chatTypeDel = 1;
+    static final int chatTypeRead = 2;
+    static final int chatTypeText = 4;
+    static final int chatTypePhone = 8;
+    static final int chatTypeVideo = 16;
+    static final int chatTypePhoto = 32;
+
+    @Override
+    public String toString() {
+        return "ChatMsg{" +
+                "chatId=" + chatId +
+                ", timeStart=" + getTimeStart() +
+                ", mbrIdFrom=" + mbrIdFrom +
+                ", mbrIdTo=" + mbrIdTo +
+                ", chatType=" + chatType +
+                ", txtMsg='" + txtMsg + '\'' +
+                '}';
+    }
+
+    public ChatMsg(){ super(); }
+    public ChatMsg(int mbrIdFrom, int mbrIdTo, int chatType, String txtMsg) {
+        // this.chatId = chatId;
+        //this.timeStart = timeStart;
+        this.setChatId().setTimeStart();
+        this.mbrIdFrom = mbrIdFrom;
+        this.mbrIdTo = mbrIdTo;
+        this.chatType = chatType;
+        this.txtMsg = txtMsg;
+    }
 
     public int getChatId() { return chatId; }
-    public ChatMsg setChatId(int chatId) {
-        this.chatId = chatId;
+    public ChatMsg setChatId() {
+        this.chatId = DbHelper.getInstance().generateChatMsgID();
         return this;
     }
 
-    public long getTimeStart() { return timeStart; }
-    public ChatMsg setTimeStart(long timeStart) {
-        this.timeStart = timeStart;
+    public String getTimeStart() {
+        // SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss");
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
+        String sd = sdf.format(new Date(Long.parseLong(String.valueOf(timeStart))));
+        return sd;
+    }
+    public ChatMsg setTimeStart() {
+        this.timeStart = System.currentTimeMillis();
         return this;
     }
 
-    public long getTimeStop() { return timeStop; }
-    public ChatMsg setTimeStop(long timeStop) {
-        this.timeStop = timeStop;
-        return this;
-    }
+//    public long getTimeStop() { return timeStop; }
+//    public ChatMsg setTimeStop(long timeStop) {
+//        this.timeStop = timeStop;
+//        return this;
+//    }
 
     public int getMbrIdFrom() { return mbrIdFrom; }
     public ChatMsg setMbrIdFrom(int mbrIdFrom) {
@@ -202,7 +241,7 @@ class ChatMsg {
 public class DbHelper {
     public static MemberWithFriend owner = new MemberWithFriend();
     public static ArrayList<Member> friendList = new ArrayList<>(); // gather info from friendSet
-    public static ArrayList<ChatMsg> channel = new ArrayList<>(); // only contains ChatMsg between owner and master
+    // public static ArrayList<ChatMsg> channel = new ArrayList<>(); // only contains ChatMsg between owner and master
     public static Member master = new Member();
     public static Member guest = new Member();
     private ArrayList<Member> memberTable = new ArrayList<>();
@@ -301,16 +340,16 @@ public class DbHelper {
         }
     }
 
-    void addChannel(ChatMsg x){ channel.add(x); }
-
-    void deleteChannel(int chatId){
-        for(ChatMsg x:channel){
-            if(x.getChatId() == chatId){
-                channel.remove(x);
-                break;
-            }
-        }
-    }
+//    void addChannel(ChatMsg x){ channel.add(x); }
+//
+//    void deleteChannel(int chatId){
+//        for(ChatMsg x:channel){
+//            if(x.getChatId() == chatId){
+//                channel.remove(x);
+//                break;
+//            }
+//        }
+//    }
     void initDbHelper(){
         // create DB if DB not exist
         // create tables: memberTable, friendTable, chatMsgTable
@@ -344,8 +383,14 @@ public class DbHelper {
         // addFriend(3,4);
 
         // add chatMsgTable
-        // when login , create channel, implememt in login
-
+        chatMsgTable.add(new ChatMsg(1, 2, ChatMsg.chatTypeText, "This is test12!"));
+        chatMsgTable.add(new ChatMsg(2, 1, ChatMsg.chatTypeText, "OK21!"));
+        chatMsgTable.add(new ChatMsg(1, 3, ChatMsg.chatTypeText, "This is test13!"));
+        chatMsgTable.add(new ChatMsg(3, 1, ChatMsg.chatTypeText, "OK31!"));
+        chatMsgTable.add(new ChatMsg(1, 4, ChatMsg.chatTypeText, "This is test14!"));
+        chatMsgTable.add(new ChatMsg(4, 1, ChatMsg.chatTypeText, "OK41!"));
+        chatMsgTable.add(new ChatMsg(2, 3, ChatMsg.chatTypeText, "This is test23!"));
+        chatMsgTable.add(new ChatMsg(3, 2, ChatMsg.chatTypeText, "OK32!"));
     }
 
     int doEmailLogin(Member obj){
@@ -364,7 +409,7 @@ public class DbHelper {
         // build owner.friendSet from friendTable
         owner.clearFriendSet(); // for backpress error
         friendList.clear();
-        channel.clear();
+        // channel.clear();
 
         int src = owner.getMbrID();
         for (Integer[] x : friendTable) {
@@ -461,5 +506,18 @@ public class DbHelper {
             }
         }
         return 0;
+    }
+
+    int generateChatMsgID(){ return chatMsgTable.size() + 1; }
+    ArrayList<ChatMsg> generateChannel(int masterId, int ownerId){
+        ArrayList<ChatMsg> temp = new ArrayList<>();
+        for(ChatMsg x : chatMsgTable){
+            int id1 = x.getMbrIdFrom();
+            int id2 = x.getMbrIdTo();
+            if((masterId == id1 && ownerId == id2) || (masterId == id2 && ownerId == id1)){
+                temp.add(x);
+            }
+        }
+        return temp;
     }
 }

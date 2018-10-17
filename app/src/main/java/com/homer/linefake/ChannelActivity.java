@@ -3,6 +3,9 @@ package com.homer.linefake;
 import android.graphics.drawable.Icon;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +14,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
+// will use RecyclerView
 public class ChannelActivity extends AppCompatActivity {
     private TextView vMessages;
     private ImageView vMasterIcon;
@@ -21,6 +27,9 @@ public class ChannelActivity extends AppCompatActivity {
     // private Button vMasterChatBtn;
     private EditText vOwnerChat;
     // private Button vOwnerChatBtn;
+    private ArrayList<ChatMsg> channel;
+    private RecyclerView vChannel;
+    private ChnAdapter chnAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +41,20 @@ public class ChannelActivity extends AppCompatActivity {
         vMasterAlias.setText(DbHelper.master.getMbrAlias());
         vOwnerAlias.setText(DbHelper.owner.getMbrAlias());
         vOwnerIcon.setImageResource(DbHelper.owner.getMbrIconIdx());
+        channel = DbHelper.getInstance().generateChannel(DbHelper.master.getMbrID(), DbHelper.owner.getMbrID());
+        vMessages.setText("channel length:" + channel.size());
+
+        // 連結元件
+        vChannel = (RecyclerView) findViewById(R.id.channel_recycler);
+        // 設置RecyclerView為列表型態
+        vChannel.setLayoutManager(new LinearLayoutManager(this));
+        // 設置格線
+        // vChannel.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+
+        // 將資料交給adapter
+        chnAdapter = new ChnAdapter(channel);
+        // 設置adapter給recycler_view
+        vChannel.setAdapter(chnAdapter);
     }
 
     private void findViews() {
@@ -44,6 +67,7 @@ public class ChannelActivity extends AppCompatActivity {
         // vMasterChatBtn = findViewById(R.id.channel_master_chat_add);
         vOwnerChat = findViewById(R.id.channel_owner_chat);
         // vOwnerChatBtn = findViewById(R.id.channel_owner_chat_add);
+
     }
 
     public void onClickMasterChat(View view){
@@ -63,4 +87,5 @@ public class ChannelActivity extends AppCompatActivity {
         }
         Toast.makeText(view.getContext(), "OwnerChat", Toast.LENGTH_SHORT).show();
     }
+
 }
