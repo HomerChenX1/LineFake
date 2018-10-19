@@ -1,11 +1,15 @@
 package com.homer.linefake;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,13 +34,31 @@ public class ChnAdapter extends RecyclerView.Adapter<ChnAdapter.ViewHolder>
             super(itemView);
         }
         protected String changeTimeStart(String str, int i){
-            List<String> items = Arrays.asList(str.split("\\s*,\\s*"));
-            if((i & ChatMsg.chatTypeRead) >0 ){
-                items.set(0,"read\n");
-            }else{
-                items.set(0,"\n");
-            }
-            return items.toString();
+            String [] items = str.split(" ");
+            // System.out.println("changeTimeStart"+items[0] + "End");
+            String retStr = (i & ChatMsg.chatTypeRead) >0 ? "read\n":"\n" ;
+            return retStr + items[1];
+        }
+
+        protected void onLongClickEvent(View view) {
+            final int pos = getAdapterPosition();
+            final View mView = view;
+            // String str = mDataSet.get(pos).getTxtMsg();
+            // Toast.makeText(view.getContext(), "onLongClick:" + str, Toast.LENGTH_SHORT).show();
+
+            PopupMenu popupMenu = new PopupMenu(view.getContext(), view);
+            popupMenu.inflate(R.menu.popup_menu);
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    // System.out.println(item.getTitle());
+                    // ChannelActivity.vMessages.setText(item.getTitle() + ":" + pos);
+                    // Toast.makeText(mView.getContext(), item.getTitle() + ":" + pos, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mView.getContext(), "Delete ChatMsg here", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
+            popupMenu.show();
         }
     }
     public class ViewHolderMaster extends ViewHolder {
@@ -50,6 +72,13 @@ public class ChnAdapter extends RecyclerView.Adapter<ChnAdapter.ViewHolder>
             chnItemMasterIcon = v.findViewById(R.id.chn_item_master_icon);
             chnItemMasterTxtMsg = v.findViewById(R.id.chn_item_master_txt_msg);
             chnItemMasterTimeStart = v.findViewById(R.id.chn_item_master_time_start);
+            chnItemMasterTxtMsg.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    onLongClickEvent(view);
+                    return true;
+                }
+            });
         }
     }
     public class ViewHolderOwner extends ViewHolder {
@@ -61,6 +90,13 @@ public class ChnAdapter extends RecyclerView.Adapter<ChnAdapter.ViewHolder>
             super(v);
             chnItemOwnerTxtMsg = v.findViewById(R.id.chn_item_owner_txt_msg);
             chnItemOwnerTimeStart = v.findViewById(R.id.chn_item_owner_time_start);
+            chnItemOwnerTxtMsg.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    onLongClickEvent(view);
+                    return true;
+                }
+            });
         }
     }
 
@@ -90,13 +126,15 @@ public class ChnAdapter extends RecyclerView.Adapter<ChnAdapter.ViewHolder>
             // set item values of master
             ((ViewHolderMaster) holder).chnItemMasterIcon.setImageResource(DbHelper.master.getMbrIconIdx());
             ((ViewHolderMaster) holder).chnItemMasterTxtMsg.setText(cm.getTxtMsg());
-            ((ViewHolderMaster) holder).chnItemMasterTimeStart.setText(cm.getTimeStart());
+            String str = holder.changeTimeStart(cm.getTimeStart(), ChatMsg.chatTypeRead);
+            ((ViewHolderMaster) holder).chnItemMasterTimeStart.setText(str);
         }
         else if (holder instanceof ViewHolderOwner)
         {
             // set item values of owner
             ((ViewHolderOwner) holder).chnItemOwnerTxtMsg.setText(cm.getTxtMsg());
-            ((ViewHolderOwner) holder).chnItemOwnerTimeStart.setText(cm.getTimeStart());
+            String str = holder.changeTimeStart(cm.getTimeStart(), ChatMsg.chatTypeRead);
+            ((ViewHolderOwner) holder).chnItemOwnerTimeStart.setText(str);
         }
     }
 
@@ -117,4 +155,19 @@ public class ChnAdapter extends RecyclerView.Adapter<ChnAdapter.ViewHolder>
         }
         return ITEM_TYPE.STYLE_OWNER.ordinal();
     }
+
+    // 新增項目
+    public void addChatMsgToChn(ChatMsg cm) {
+        mDataSet.add(cm);
+        // need to change chatMsgTable
+        notifyItemInserted(mDataSet.size() - 1);
+    }
+
+    // 刪除項目
+    public void removeChatMsgFromChn(int position){
+        mDataSet.remove(position);
+        // need to change chatMsgTable
+        notifyItemRemoved(position);
+    }
+
 }

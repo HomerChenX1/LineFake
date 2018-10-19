@@ -27,12 +27,14 @@ public class ChannelActivity extends AppCompatActivity {
     // private Button vMasterChatBtn;
     private EditText vOwnerChat;
     // private Button vOwnerChatBtn;
-    private ArrayList<ChatMsg> channel;
+
     private RecyclerView vChannel;
     private ChnAdapter chnAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ArrayList<ChatMsg> channel;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel);
         findViews();
@@ -44,12 +46,11 @@ public class ChannelActivity extends AppCompatActivity {
         channel = DbHelper.getInstance().generateChannel(DbHelper.master.getMbrID(), DbHelper.owner.getMbrID());
         vMessages.setText("channel length:" + channel.size());
 
-        // 連結元件
-        vChannel = (RecyclerView) findViewById(R.id.channel_recycler);
+
         // 設置RecyclerView為列表型態
         vChannel.setLayoutManager(new LinearLayoutManager(this));
         // 設置格線
-        // vChannel.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        vChannel.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         // 將資料交給adapter
         chnAdapter = new ChnAdapter(channel);
@@ -68,24 +69,34 @@ public class ChannelActivity extends AppCompatActivity {
         vOwnerChat = findViewById(R.id.channel_owner_chat);
         // vOwnerChatBtn = findViewById(R.id.channel_owner_chat_add);
 
+        // 連結元件
+        vChannel = findViewById(R.id.channel_recycler);
+
     }
 
     public void onClickMasterChat(View view){
         String temp = vMasterChat.getText().toString().trim();
+        Toast.makeText(view.getContext(), "MasterChat", Toast.LENGTH_SHORT).show();
         if(TextUtils.isEmpty(temp)){
             vMasterChat.requestFocus();
             return;
         }
-        Toast.makeText(view.getContext(), "MasterChat", Toast.LENGTH_SHORT).show();
+        ChatMsg cm = new ChatMsg(DbHelper.master.getMbrID(), DbHelper.owner.getMbrID(), ChatMsg.chatTypeText, temp);
+        chnAdapter.addChatMsgToChn(cm);
+        DbHelper.getInstance().addChat(cm);
+        vMessages.setText(cm.toString());
     }
 
     public void onClickOwnerChat(View view){
         String temp = vOwnerChat.getText().toString().trim();
+        Toast.makeText(view.getContext(), "OwnerChat", Toast.LENGTH_SHORT).show();
         if(TextUtils.isEmpty(temp)){
             vOwnerChat.requestFocus();
             return;
         }
-        Toast.makeText(view.getContext(), "OwnerChat", Toast.LENGTH_SHORT).show();
+        ChatMsg cm = new ChatMsg(DbHelper.owner.getMbrID(), DbHelper.master.getMbrID(), ChatMsg.chatTypeText, temp);
+        chnAdapter.addChatMsgToChn(cm);
+        DbHelper.getInstance().addChat(cm);
     }
 
 }

@@ -42,4 +42,7 @@
     <string name="prompt_chn_phone_call">Owner calls to master</string>
     <string name="prompt_chn_master_chat">Message from master to owner</string>
     <string name="prompt_chn_owner_chat">Message from owner to master</string>
+
+    <!-- Strings related to chnAdapter -->
+    <string name="prompt_chn_block_item">Block Item</string>
 </resources>

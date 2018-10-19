@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="left"
+    android:background="?android:attr/selectableItemBackground"
     android:orientation="horizontal">
 
     <ImageView
@@ -21,12 +22,20 @@
         android:gravity="center"
         android:text="@string/xml_textview2" />
 
+    <ImageView
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:contentDescription="@string/xml_icon"
+        android:padding="2dp"
+        android:layout_gravity="center"
+        android:src="@drawable/phone" />
+
     <TextView
         android:id="@+id/chn_item_master_time_start"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="bottom"
-        android:maxEms="4"
+        android:lines="2"
         android:text="HH:mm:ss"
         android:textSize="12sp" />
 
