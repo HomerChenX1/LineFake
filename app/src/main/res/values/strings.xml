@@ -45,4 +45,6 @@
 
     <!-- Strings related to chnAdapter -->
     <string name="prompt_chn_block_item">Block Item</string>
+    <string name="action_chn_block_item">No implement now</string>
+    <string name="action_chn_list_title">"Channel: long click to select delete"</string>
 </resources>

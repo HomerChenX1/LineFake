@@ -128,11 +128,11 @@ class Member {
     @Override
     public String toString() {
         return "Member{" +
-                "mbrID=" + mbrID +
-                ", mbrAlias='" + mbrAlias + '\'' +
-                ", mbrPhone='" + mbrPhone + '\'' +
-                ", mbrEmail='" + mbrEmail + '\'' +
-                ", mbrPassword='" + mbrPassword + '\'' +
+                "ID=" + mbrID +
+                ", Alias='" + mbrAlias + '\'' +
+                ", Phone='" + mbrPhone + '\'' +
+                ", Email='" + mbrEmail + '\'' +
+                ", Pwd='" + mbrPassword + '\'' +
                 '}';
     }
 }

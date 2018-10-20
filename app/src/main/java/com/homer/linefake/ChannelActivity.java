@@ -30,10 +30,10 @@ public class ChannelActivity extends AppCompatActivity {
 
     private RecyclerView vChannel;
     private ChnAdapter chnAdapter;
+    ArrayList<ChatMsg> channel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ArrayList<ChatMsg> channel;
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel);
@@ -54,8 +54,10 @@ public class ChannelActivity extends AppCompatActivity {
 
         // 將資料交給adapter
         chnAdapter = new ChnAdapter(channel);
+
         // 設置adapter給recycler_view
         vChannel.setAdapter(chnAdapter);
+        vChannel.scrollToPosition(channel.size()-1);
     }
 
     private void findViews() {
@@ -84,6 +86,7 @@ public class ChannelActivity extends AppCompatActivity {
         ChatMsg cm = new ChatMsg(DbHelper.master.getMbrID(), DbHelper.owner.getMbrID(), ChatMsg.chatTypeText, temp);
         chnAdapter.addChatMsgToChn(cm);
         DbHelper.getInstance().addChat(cm);
+        vChannel.scrollToPosition(channel.size()-1);
         vMessages.setText(cm.toString());
     }
 
@@ -97,6 +100,7 @@ public class ChannelActivity extends AppCompatActivity {
         ChatMsg cm = new ChatMsg(DbHelper.owner.getMbrID(), DbHelper.master.getMbrID(), ChatMsg.chatTypeText, temp);
         chnAdapter.addChatMsgToChn(cm);
         DbHelper.getInstance().addChat(cm);
+        vChannel.scrollToPosition(channel.size()-1);
     }
 
 }

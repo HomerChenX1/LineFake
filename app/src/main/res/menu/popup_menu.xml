@@ -2,10 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/delete_item"
+        android:id="@+id/chn_item_delete"
         android:title="@string/action_friend_delete" />
     <item
-        android:id="@+id/block_item"
+        android:id="@+id/chn_item_block"
         android:title="@string/prompt_chn_block_item" />
 
 </menu>

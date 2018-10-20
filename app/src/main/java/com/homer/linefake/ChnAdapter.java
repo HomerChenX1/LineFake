@@ -54,7 +54,15 @@ public class ChnAdapter extends RecyclerView.Adapter<ChnAdapter.ViewHolder>
                     // System.out.println(item.getTitle());
                     // ChannelActivity.vMessages.setText(item.getTitle() + ":" + pos);
                     // Toast.makeText(mView.getContext(), item.getTitle() + ":" + pos, Toast.LENGTH_SHORT).show();
-                    Toast.makeText(mView.getContext(), "Delete ChatMsg here", Toast.LENGTH_SHORT).show();
+                    switch (item.getItemId()){
+                        case R.id.chn_item_delete:
+                            // Toast.makeText(mView.getContext(), "Delete ChatMsg here", Toast.LENGTH_SHORT).show();
+                            removeChatMsgFromChn(pos);
+                            break;
+                        case R.id.chn_item_block:
+                        default:
+                            Toast.makeText(mView.getContext(), R.string.action_chn_block_item, Toast.LENGTH_SHORT).show();
+                    }
                     return true;
                 }
             });
@@ -165,8 +173,9 @@ public class ChnAdapter extends RecyclerView.Adapter<ChnAdapter.ViewHolder>
 
     // 刪除項目
     public void removeChatMsgFromChn(int position){
+        // delete chatMsgTable   deleteChat(int chatId)
+        DbHelper.getInstance().deleteChat(mDataSet.get(position).getChatId());
         mDataSet.remove(position);
-        // need to change chatMsgTable
         notifyItemRemoved(position);
     }
 
