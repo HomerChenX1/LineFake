@@ -1,249 +1,13 @@
 package com.homer.linefake;
 
-import android.text.TextUtils;
-import android.widget.Toast;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-class Member {
-    private int mbrID = 0;
-    private int mbrIconIdx = 0;
-    private String mbrAlias;
-    private String mbrPhone;
-    private String mbrEmail;
-    private String mbrPassword;
-
-    private static final String EMAIL_PATTERN = "^[a-zA-Z0-9#_~!$&'()*+,;=:.\"(),:;<>@\\[\\]\\\\]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*$";
-    private static Pattern pattern = Pattern.compile(EMAIL_PATTERN);
-
-    public int getMbrID() { return mbrID; }
-    public Member setMbrID(int mbrID) {
-        this.mbrID = mbrID;
-        return(this);
-    }
-
-    public int getMbrIconIdx() { return mbrIconIdx; }
-    // public Member setMbrIconIdx(int mbrIconIdx) {
-    public Member setMbrIconIdx() {
-        // mbrIconIdx is not used
-        int [] pics = {
-                R.drawable.p02,
-                R.drawable.p03,
-                R.drawable.p04,
-                R.drawable.p05,
-                R.drawable.p06,
-                R.drawable.p07,
-                R.drawable.p08,
-                R.drawable.p01
-        };
-
-        int i = 7;
-
-        if(mbrID > 0) {
-            i = (mbrID - 1) % 7;
-        }
-        this.mbrIconIdx = pics[i];
-        return(this);
-    }
-
-    public String getMbrAlias() { return mbrAlias; }
-    public Member setMbrAlias(String mbrAlias) {
-        this.mbrAlias = mbrAlias;
-        return(this);
-    }
-
-    public String getMbrPhone() { return mbrPhone; }
-    public Member setMbrPhone(String mbrPhone) {
-        this.mbrPhone = mbrPhone;
-        return(this);
-    }
-
-    public String getMbrEmail() { return mbrEmail; }
-    public Member setMbrEmail(String mbrEmail) {
-        this.mbrEmail = mbrEmail;
-        return(this);
-    }
-
-    public String getMbrPassword() { return mbrPassword; }
-    public Member setMbrPassword(String mbrPassword) {
-        this.mbrPassword = mbrPassword;
-        return(this);
-    }
-
-    public void copyFrom(Member x){
-        mbrID = x.getMbrID();
-        mbrIconIdx = x.getMbrIconIdx();
-        mbrAlias = x.getMbrAlias();
-        mbrPhone = x.getMbrPhone();
-        mbrEmail = x.getMbrEmail();
-        mbrPassword = x.getMbrPassword();
-    }
-
-    public void copyTo(Member x){
-        x.setMbrID(mbrID);
-        x.setMbrIconIdx();
-        x.setMbrAlias(mbrAlias);
-        x.setMbrPhone(mbrPhone);
-        x.setMbrEmail(mbrEmail);
-        x.setMbrPassword(mbrPassword);
-    }
-
-    static int isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        if(TextUtils.isEmpty(email)){ return 1; }
-        // if(!email.contains("@")){ return 2; }
-        Matcher matcher = pattern.matcher(email);
-        if(!matcher.matches()){ return 2; }
-
-        return 0;
-    }
-    static int isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        if(TextUtils.isEmpty(password)){ return 1; }
-        if(password.length() < 6){ return 2; }
-        return 0;
-    }
-    static int isAliasValid(String alias) {
-        //TODO: Replace this with your own logic
-        if(TextUtils.isEmpty(alias)){ return 1; }
-        if(alias.length() < 4){ return 2; }
-        return 0;
-    }
-    static int isPhoneValid(String phone) {
-        //TODO: Replace this with your own logic
-        if(TextUtils.isEmpty(phone)){ return 1; }
-        if(phone.length() < 6){ return 2; }
-        return 0;
-    }
-
-    @Override
-    public String toString() {
-        return "Member{" +
-                "ID=" + mbrID +
-                ", Alias='" + mbrAlias + '\'' +
-                ", Phone='" + mbrPhone + '\'' +
-                ", Email='" + mbrEmail + '\'' +
-                ", Pwd='" + mbrPassword + '\'' +
-                '}';
-    }
-}
-
-class MemberWithFriend extends Member {
-    private Set<Integer> friendSet = new HashSet<>();
-
-    public Integer[] getFriendSet() { return friendSet.toArray(new Integer[friendSet.size()]); }
-    public Member setFriendSet(Integer x) {
-        this.friendSet.add(x);
-        return this;
-    }
-    public int getFriendSetSize(){
-        return friendSet.size();
-    }
-    public void clearFriendSet(){ friendSet.clear();}
-    public void deleteFriendSet(Integer x){ friendSet.remove(x);}
-}
-
-class ChatMsg {
-    private int chatId;
-    private long timeStart;
-    // private long timeStop;
-    private int mbrIdFrom;
-    private int mbrIdTo;
-    private int chatType;
-    private String txtMsg;
-    static final int chatTypeDel = 1;
-    static final int chatTypeRead = 2;
-    static final int chatTypeText = 4;
-    static final int chatTypePhone = 8;
-    static final int chatTypeVideo = 16;
-    static final int chatTypePhoto = 32;
-
-    @Override
-    public String toString() {
-        return "ChatMsg{" +
-                "chatId=" + chatId +
-                ", timeStart=" + getTimeStart() +
-                ", mbrIdFrom=" + mbrIdFrom +
-                ", mbrIdTo=" + mbrIdTo +
-                ", chatType=" + chatType +
-                ", txtMsg='" + txtMsg + '\'' +
-                '}';
-    }
-
-    public ChatMsg(){ super(); }
-    public ChatMsg(int mbrIdFrom, int mbrIdTo, int chatType, String txtMsg) {
-        // this.chatId = chatId;
-        //this.timeStart = timeStart;
-        this.setChatId().setTimeStart();
-        this.mbrIdFrom = mbrIdFrom;
-        this.mbrIdTo = mbrIdTo;
-        this.chatType = chatType;
-        this.txtMsg = txtMsg;
-    }
-
-    public int getChatId() { return chatId; }
-    public ChatMsg setChatId() {
-        this.chatId = DbHelper.getInstance().generateChatMsgID();
-        return this;
-    }
-
-    public String getTimeStart() {
-        // SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss");
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
-        String sd = sdf.format(new Date(Long.parseLong(String.valueOf(timeStart))));
-        return sd;
-    }
-    public ChatMsg setTimeStart() {
-        this.timeStart = System.currentTimeMillis();
-        return this;
-    }
-
-//    public long getTimeStop() { return timeStop; }
-//    public ChatMsg setTimeStop(long timeStop) {
-//        this.timeStop = timeStop;
-//        return this;
-//    }
-
-    public int getMbrIdFrom() { return mbrIdFrom; }
-    public ChatMsg setMbrIdFrom(int mbrIdFrom) {
-        this.mbrIdFrom = mbrIdFrom;
-        return this;
-    }
-
-    public int getMbrIdTo() { return mbrIdTo; }
-    public ChatMsg setMbrIdTo(int mbrIdTo) {
-        this.mbrIdTo = mbrIdTo;
-        return this;
-    }
-
-    public int getChatType() { return chatType; }
-    public ChatMsg setChatType(int chatType) {
-        this.chatType = chatType;
-        return this;
-    }
-
-    public String getTxtMsg() { return txtMsg; }
-    public ChatMsg setTxtMsg(String txtMsg) {
-        this.txtMsg = txtMsg;
-        return this;
-    }
-}
-public class DbHelper {
-    public static MemberWithFriend owner = new MemberWithFriend();
-    public static ArrayList<Member> friendList = new ArrayList<>(); // gather info from friendSet
+class DbHelper {
+    static MemberWithFriend owner = new MemberWithFriend();
+    static ArrayList<Member> friendList = new ArrayList<>(); // gather info from friendSet
     // public static ArrayList<ChatMsg> channel = new ArrayList<>(); // only contains ChatMsg between owner and master
-    public static Member master = new Member();
-    public static Member guest = new Member();
+    static Member master = new Member();
+    static Member guest = new Member();
     private ArrayList<Member> memberTable = new ArrayList<>();
     private ArrayList<Integer []> friendTable = new ArrayList<>();
     private ArrayList<ChatMsg> chatMsgTable = new ArrayList<>();
@@ -253,7 +17,7 @@ public class DbHelper {
 
     private DbHelper() {}
     //  http://givemepass-blog.logdown.com/posts/288939-sigleton-pattern
-    public static DbHelper getInstance() {
+    static DbHelper getInstance() {
         if (ourInstance == null) {
             ourInstance = new DbHelper();
         }
@@ -340,16 +104,14 @@ public class DbHelper {
         }
     }
 
-//    void addChannel(ChatMsg x){ channel.add(x); }
-//
-//    void deleteChannel(int chatId){
-//        for(ChatMsg x:channel){
-//            if(x.getChatId() == chatId){
-//                channel.remove(x);
-//                break;
-//            }
-//        }
-//    }
+    void deleteChatMsgByMbrId(int mbrId){
+        ArrayList<ChatMsg> tempList = new ArrayList<>();
+        for(ChatMsg x : chatMsgTable){
+            if((x.getMbrIdFrom()==mbrId)||(x.getMbrIdTo()==mbrId)) tempList.add(x);
+        }
+        chatMsgTable.removeAll(tempList);
+    }
+
     void initDbHelper(){
         // create DB if DB not exist
         // create tables: memberTable, friendTable, chatMsgTable
@@ -470,7 +232,7 @@ public class DbHelper {
         // owner.friendset clear
         owner.clearFriendSet();
         // delete chatMsgTable by owner.ID IDfrom IDto
-        // channel clear
+        deleteChatMsgByMbrId(ID);
         // delete owner.ID = 0 master.ID = 0
         owner.setMbrID(0);
     }

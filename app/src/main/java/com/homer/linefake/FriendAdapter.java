@@ -1,24 +1,19 @@
 package com.homer.linefake;
 
 import android.content.Context;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 class FriendAdapter extends BaseAdapter {
-    Context context;
-    List<Member> memberList;
+    private Context context;
+    private List<Member> memberList;
 
     // DbHelper.friendList
     FriendAdapter(Context context, List<Member> memberList) {
@@ -26,7 +21,7 @@ class FriendAdapter extends BaseAdapter {
         this.memberList = memberList;
     }
 
-    public void refresh(ArrayList<Member> list) {
+    void refresh(ArrayList<Member> list) {
         memberList = list;
         notifyDataSetChanged();
     }
@@ -44,19 +39,19 @@ class FriendAdapter extends BaseAdapter {
         }
 
         Member member = memberList.get(position);
-        ImageView ivImage = (ImageView) itemView
+        ImageView ivImage = itemView
                 .findViewById(R.id.friend_item_icon);
         ivImage.setImageResource(member.getMbrIconIdx());
 
-        TextView tvId = (TextView) itemView
+        TextView tvId = itemView
                 .findViewById(R.id.friend_item_id);
         tvId.setText("ID:" + String.valueOf(member.getMbrID()));
 
-        TextView tvName = (TextView) itemView
+        TextView tvName = itemView
                 .findViewById(R.id.friend_item_alias);
         tvName.setText(member.getMbrAlias());
 
-        TextView tvPhone = (TextView) itemView
+        TextView tvPhone = itemView
                 .findViewById(R.id.friend_item_phone);
         tvPhone.setText("Ph:" + member.getMbrPhone());
         return itemView;

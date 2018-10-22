@@ -1,7 +1,8 @@
 package com.homer.linefake;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,36 +12,35 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class ChnAdapter extends RecyclerView.Adapter<ChnAdapter.ViewHolder>
 {
     private List<ChatMsg> mDataSet;
 
-    public static enum ITEM_TYPE
+    public enum ITEM_TYPE
     {
         STYLE_MASTER,
         STYLE_OWNER
     }
 
-    public ChnAdapter(List<ChatMsg> data)
+    ChnAdapter(List<ChatMsg> data)
     {
         mDataSet = data;
     }
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder{
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
         }
-        protected String changeTimeStart(String str, int i){
+        String changeTimeStart(String str, int i){
             String [] items = str.split(" ");
             // System.out.println("changeTimeStart"+items[0] + "End");
             String retStr = (i & ChatMsg.chatTypeRead) >0 ? "read\n":"\n" ;
             return retStr + items[1];
         }
 
-        protected void onLongClickEvent(View view) {
+        void onLongClickEvent(View view) {
             final int pos = getAdapterPosition();
             final View mView = view;
             // String str = mDataSet.get(pos).getTxtMsg();
@@ -74,7 +74,7 @@ public class ChnAdapter extends RecyclerView.Adapter<ChnAdapter.ViewHolder>
         TextView chnItemMasterTxtMsg;
         TextView chnItemMasterTimeStart;
 
-        public ViewHolderMaster(View v)
+        ViewHolderMaster(View v)
         {
             super(v);
             chnItemMasterIcon = v.findViewById(R.id.chn_item_master_icon);
@@ -93,7 +93,7 @@ public class ChnAdapter extends RecyclerView.Adapter<ChnAdapter.ViewHolder>
         TextView chnItemOwnerTxtMsg;
         TextView chnItemOwnerTimeStart;
 
-        public ViewHolderOwner(View v)
+        ViewHolderOwner(View v)
         {
             super(v);
             chnItemOwnerTxtMsg = v.findViewById(R.id.chn_item_owner_txt_msg);
@@ -109,6 +109,7 @@ public class ChnAdapter extends RecyclerView.Adapter<ChnAdapter.ViewHolder>
     }
 
     @Override
+    @Nullable
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
         ViewHolder mViewHolder = null;
@@ -127,7 +128,7 @@ public class ChnAdapter extends RecyclerView.Adapter<ChnAdapter.ViewHolder>
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position){
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position){
         ChatMsg cm = mDataSet.get(position);
         if (holder instanceof ViewHolderMaster)
         {
@@ -165,14 +166,14 @@ public class ChnAdapter extends RecyclerView.Adapter<ChnAdapter.ViewHolder>
     }
 
     // 新增項目
-    public void addChatMsgToChn(ChatMsg cm) {
+    void addChatMsgToChn(ChatMsg cm) {
         mDataSet.add(cm);
         // need to change chatMsgTable
         notifyItemInserted(mDataSet.size() - 1);
     }
 
     // 刪除項目
-    public void removeChatMsgFromChn(int position){
+    void removeChatMsgFromChn(int position){
         // delete chatMsgTable   deleteChat(int chatId)
         DbHelper.getInstance().deleteChat(mDataSet.get(position).getChatId());
         mDataSet.remove(position);

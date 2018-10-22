@@ -5,20 +5,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.List;
-
 public class InfoActivity extends AppCompatActivity {
     private TextView vMessages;
     private ImageView vIcon;
     private TextView vAlias;
-    private Button vFriendTools;
+    // private Button vFriendTools;
     private ListView vFriendSet;
     private FriendAdapter friendAdapter;
 
@@ -29,7 +26,7 @@ public class InfoActivity extends AppCompatActivity {
         setTitle(getString(R.string.app_name) + ":  Owner Info");
 
         // LinearLayout only use setOnClickListener. Do not set onClick in XML file
-        LinearLayout app_layer = (LinearLayout) findViewById (R.id.info_update);
+        LinearLayout app_layer = findViewById (R.id.info_update);
         app_layer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,7 +46,7 @@ public class InfoActivity extends AppCompatActivity {
         vMessages = findViewById(R.id.info_messages);
         vIcon = findViewById(R.id.info_icon);
         vAlias = findViewById(R.id.info_alias);
-        vFriendTools = findViewById(R.id.info_friend_tools);
+        // vFriendTools = findViewById(R.id.info_friend_tools);
 
         vFriendSet = findViewById(R.id.info_friend_set);
         friendAdapter = new FriendAdapter(this, DbHelper.friendList);
