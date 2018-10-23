@@ -132,7 +132,7 @@ class Member {
 class MemberWithFriend extends Member {
     private Set<Integer> friendSet = new HashSet<>();
 
-    Integer[] getFriendSet() { return friendSet.toArray(new Integer[friendSet.size()]); }
+    Integer[] getFriendSet() { return friendSet.toArray(new Integer[0]); }
     Member setFriendSet(Integer x) {
         this.friendSet.add(x);
         return this;

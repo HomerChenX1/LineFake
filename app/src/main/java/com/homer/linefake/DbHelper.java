@@ -101,7 +101,7 @@ class DbHelper {
                 // owner.setFriendSet(x[1]);
             }
         }
-        Integer [] temp2 = temp.toArray(new Integer [temp.size()]);
+        Integer [] temp2 = temp.toArray(new Integer[0]);
         return temp2;
     }
 

@@ -87,7 +87,8 @@ public class SqlDbHelper extends SQLiteOpenHelper {
         }
     }
 
-    public SqlDbHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
+    public SqlDbHelper(Context context) {
+        //Context context, String name, SQLiteDatabase.CursorFactory factory, int version
         super(context, DB_NAME, null, DB_VERSION);
     }
 
