@@ -93,6 +93,18 @@ class DbHelper {
         return i;
     }
 
+    Integer[] queryFriend(int ownerId){
+        ArrayList<Integer> temp = new ArrayList<>();
+        for (Integer[] x : friendTable) {
+            if (ownerId == x[0]) {
+                temp.add(x[1]);
+                // owner.setFriendSet(x[1]);
+            }
+        }
+        Integer [] temp2 = temp.toArray(new Integer [temp.size()]);
+        return temp2;
+    }
+
     void addChat(ChatMsg x){ chatMsgTable.add(x); }
 
     void deleteChat(int chatId){
@@ -158,7 +170,7 @@ class DbHelper {
     int doEmailLogin(Member obj){
         String objEmail = obj.getMbrEmail();
         int idx = 0;
-        for(idx = 0; idx < memberTable.size() ;idx++){
+        for(; idx < memberTable.size() ;idx++){
             if(memberTable.get(idx).getMbrEmail().equals(objEmail))
                 break;
         }
@@ -173,11 +185,14 @@ class DbHelper {
         friendList.clear();
         // channel.clear();
 
-        int src = owner.getMbrID();
-        for (Integer[] x : friendTable) {
-            if (src == x[0]) {
-                owner.setFriendSet(x[1]);
-            }
+//        int src = owner.getMbrID();
+//        for (Integer[] x : friendTable) {
+//            if (src == x[0]) {
+//                owner.setFriendSet(x[1]);
+//            }
+//        }
+        for(int i : queryFriend(owner.getMbrID())){
+            owner.setFriendSet(i);
         }
         if (owner.getFriendSet().length != 0) genFriendList();
         return 0;
