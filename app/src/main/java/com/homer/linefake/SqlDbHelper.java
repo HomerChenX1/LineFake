@@ -16,11 +16,15 @@ public class SqlDbHelper extends SQLiteOpenHelper {
 
     class FriendTable {
         String TABLE_NAME = "FriendTable";
-        String TABLE_COLS = "( OWNERID INTEGER PRIMARY KEY NOT NULL, MASTERID INTEGER NOT NULL );";
+        String TABLE_COLS = "( " +
+                // "_id INTEGER PRIMARY KEY(more columns) AUTOINCREMENT, " +
+                "_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "OWNERID INTEGER NOT NULL, " +
+                "MASTERID INTEGER NOT NULL " +
+                ");";
         String [] nCOLS = {"OWNERID","MASTERID"};
         String TABLE_CREATE;
 
-        // CREATE TABLE ( ownerId INTEGER PRIMARY KEY NOT NULL, masterId INTEGER NOT NULL );
         FriendTable() { genTABLE_CREATE(); }
 
         void genTABLE_CREATE(){ TABLE_CREATE = "CREATE TABLE " + TABLE_NAME + TABLE_COLS; }
@@ -53,19 +57,19 @@ public class SqlDbHelper extends SQLiteOpenHelper {
             values.put(nCOLS[0], masterId);
             values.put(nCOLS[1], ownerId);
             pKey2 = db.insert(TABLE_NAME, null, values);
-            Log.d("sqlAddFriend : ", pKey1 + ":" + pKey2);
+            Log.d("HomersqlAddFriend : ", pKey1 + ":" + pKey2);
         }
 
         //DELETE FROM table_name WHERE OWNERID=ownerId AND MASTERID=masterId or OWNERID=masterId AND MASTERID=ownerId;
         int deleteFriend(int ownerId, int masterId) {
             //SQLiteDatabase db = getWritableDatabase();
             int temp = -1;
-            String whereClause1 = nCOLS[0] + " = ?  and " + nCOLS[1] + " = ? " ;
-            String whereClause2 = nCOLS[1] + " = ?  and " + nCOLS[2] + " = ? " ;
+            String whereClause1 = "( " + nCOLS[0] + " = ?  and " + nCOLS[1] + " = ? " + " )";
+            String whereClause2 = "( " + nCOLS[1] + " = ?  and " + nCOLS[2] + " = ? " + " )";
             String whereClause = whereClause1 + " OR " +whereClause2;
             String[] whereArgs = {String.valueOf(ownerId), String.valueOf(masterId), String.valueOf(ownerId), String.valueOf(masterId)};
             temp = db.delete(TABLE_NAME, whereClause, whereArgs);
-            Log.d("sqlDeleteFriend : ", whereClause + ":" + temp);
+            Log.d("HomersqlDeleteFriend : ", whereClause + ":" + temp);
             return temp;
         }
         //query
