@@ -184,6 +184,10 @@ class ChatMsg {
         this.chatId = DbHelper.getInstance().generateChatMsgID();
         return this;
     }
+    ChatMsg setChatId(int chatId) {
+        this.chatId = chatId;
+        return this;
+    }
 
     String getTimeStart() {
         // SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss");
@@ -193,8 +197,13 @@ class ChatMsg {
         //return sd;
         return sdf.format(new Date(Long.parseLong(String.valueOf(timeStart))));
     }
+    Long getTimeStartLong(){ return timeStart; }
     ChatMsg setTimeStart() {
         this.timeStart = System.currentTimeMillis();
+        return this;
+    }
+    ChatMsg setTimeStart(long timeStart) {
+        this.timeStart = timeStart;
         return this;
     }
 

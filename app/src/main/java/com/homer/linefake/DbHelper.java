@@ -12,6 +12,9 @@ class DbHelper {
     private ArrayList<Integer []> friendTable = new ArrayList<>();
     private ArrayList<ChatMsg> chatMsgTable = new ArrayList<>();
 
+    static int useSQL = 1; // =0 : use ArrayList, =1 use SQLite
+    SqlDbHelper sqlDbHelper = null;
+
 
     private static DbHelper ourInstance;
 
@@ -71,6 +74,10 @@ class DbHelper {
     int generateMbrID(){ return memberTable.size() + 1; }
 
     void addFriend(int ownerId, int masterId){
+        if(useSQL == 1){
+            sqlDbHelper.friendTable.addFriend(ownerId, masterId);
+            return;
+        }
         Integer [] x1 = { ownerId, masterId};
         Integer [] x2 = { masterId, ownerId };
         friendTable.add(x1);
@@ -78,6 +85,9 @@ class DbHelper {
     }
 
     int deleteFriend(int ownerId, int masterId) {
+        if(useSQL==1){
+            return sqlDbHelper.friendTable.deleteFriend(ownerId, masterId);
+        }
         ArrayList<Integer [] > items = new ArrayList<>();
         for(Integer [] x : friendTable) {
             if ((x[0] == ownerId)&& (x[1] == masterId)) {
@@ -94,6 +104,9 @@ class DbHelper {
     }
 
     Integer[] queryFriend(int ownerId){
+        if(useSQL==1){
+            return sqlDbHelper.friendTable.queryFriend(ownerId);
+        }
         ArrayList<Integer> temp = new ArrayList<>();
         for (Integer[] x : friendTable) {
             if (ownerId == x[0]) {
@@ -105,9 +118,19 @@ class DbHelper {
         return temp2;
     }
 
-    void addChat(ChatMsg x){ chatMsgTable.add(x); }
+    void addChat(ChatMsg x){
+        if(useSQL==1){
+            sqlDbHelper.chatMsgTable.addChat(x);
+            return;
+        }
+        chatMsgTable.add(x);
+    }
 
     void deleteChat(int chatId){
+        if(useSQL==1){
+            sqlDbHelper.chatMsgTable.deleteChat(chatId);
+            return;
+        }
         for(ChatMsg x:chatMsgTable){
             if(x.getChatId() == chatId){
                 chatMsgTable.remove(x);
@@ -117,6 +140,10 @@ class DbHelper {
     }
 
     void deleteChatMsgByMbrId(int mbrId){
+        if(useSQL==1){
+            sqlDbHelper.chatMsgTable.deleteChatMsgByMbrId(mbrId);
+            return;
+        }
         ArrayList<ChatMsg> tempList = new ArrayList<>();
         for(ChatMsg x : chatMsgTable){
             if((x.getMbrIdFrom()==mbrId)||(x.getMbrIdTo()==mbrId)) tempList.add(x);
@@ -156,15 +183,15 @@ class DbHelper {
         addFriend(2,3);
         // addFriend(3,4);
 
-        // add chatMsgTable
-        chatMsgTable.add(new ChatMsg(1, 2, ChatMsg.chatTypeText, "This is test12!"));
-        chatMsgTable.add(new ChatMsg(2, 1, ChatMsg.chatTypeText, "OK21!"));
-        chatMsgTable.add(new ChatMsg(1, 3, ChatMsg.chatTypeText, "This is test13!"));
-        chatMsgTable.add(new ChatMsg(3, 1, ChatMsg.chatTypeText, "OK31!"));
-        chatMsgTable.add(new ChatMsg(1, 4, ChatMsg.chatTypeText, "This is test14!"));
-        chatMsgTable.add(new ChatMsg(4, 1, ChatMsg.chatTypeText, "OK41!"));
-        chatMsgTable.add(new ChatMsg(2, 3, ChatMsg.chatTypeText, "This is test23!"));
-        chatMsgTable.add(new ChatMsg(3, 2, ChatMsg.chatTypeText, "OK32!"));
+        // add chatMsgTable : addChat
+        addChat(new ChatMsg(1, 2, ChatMsg.chatTypeText, "This is test12!"));
+        addChat(new ChatMsg(2, 1, ChatMsg.chatTypeText, "OK21!"));
+        addChat(new ChatMsg(1, 3, ChatMsg.chatTypeText, "This is test13!"));
+        addChat(new ChatMsg(3, 1, ChatMsg.chatTypeText, "OK31!"));
+        addChat(new ChatMsg(1, 4, ChatMsg.chatTypeText, "This is test14!"));
+        addChat(new ChatMsg(4, 1, ChatMsg.chatTypeText, "OK41!"));
+        addChat(new ChatMsg(2, 3, ChatMsg.chatTypeText, "This is test23!"));
+        addChat(new ChatMsg(3, 2, ChatMsg.chatTypeText, "OK32!"));
     }
 
     int doEmailLogin(Member obj){
@@ -285,8 +312,11 @@ class DbHelper {
         return 0;
     }
 
-    int generateChatMsgID(){ return chatMsgTable.size() + 1; }
+    int generateChatMsgID(){ return chatMsgTable.size() + 11; }
     ArrayList<ChatMsg> generateChannel(int masterId, int ownerId){
+        if(useSQL==1) {
+            return sqlDbHelper.chatMsgTable.generateChannel(masterId, ownerId);
+        }
         ArrayList<ChatMsg> temp = new ArrayList<>();
         for(ChatMsg x : chatMsgTable){
             int id1 = x.getMbrIdFrom();

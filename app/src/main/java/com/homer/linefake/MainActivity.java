@@ -11,6 +11,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+
 public class MainActivity extends AppCompatActivity {
     private ProgressBar vProgress;
     // private TextInputLayout vEmailLayout; not necessary
@@ -32,8 +34,30 @@ public class MainActivity extends AppCompatActivity {
         // vMessages.setText(eMailAutoList[0]+"\n"+eMailAutoList[1]+"\n"+eMailAutoList[2]+"\n"+eMailAutoList[3]);
         // ChatMsg testChat = new ChatMsg(2, 1, ChatMsg.chatTypeText, "OK32!");
         // vMessages.setText(testChat.toString());
-        DbHelper.getInstance().initDbHelper();
-        // showProgress(false);
+
+        switch (DbHelper.useSQL){
+            case 1: // use SQLite
+                // if database file exist, delete it
+                File dbFile = this.getDatabasePath(SqlDbHelper.DB_NAME);
+                String sMessage = dbFile.toString();
+
+                if(dbFile.exists()) {
+                    sMessage = sMessage + "\nThe db file exists. " + SqlDbHelper.DB_NAME;
+                    if(this.deleteDatabase(SqlDbHelper.DB_NAME)){
+                        // Toast.makeText(this,"The db file is deleted:" + SqlDbHelper.DB_NAME,Toast.LENGTH_LONG).show();
+                        sMessage = sMessage + ". Then deleted";
+                    }
+                }
+                vMessages.setText(sMessage);
+                // if database file not exist, run here
+                DbHelper.getInstance().sqlDbHelper = new SqlDbHelper(this);
+                DbHelper.getInstance().sqlDbHelper.setDb(true);
+                DbHelper.getInstance().initDbHelper(); // running under debug
+                break;
+            default:
+                // use memory by ArrayList
+                DbHelper.getInstance().initDbHelper();
+        }
     }
 
     @Override
@@ -160,5 +184,13 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MemberActivity.class);
         intent.putExtra("member_mode",0);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if((DbHelper.useSQL==1) && (DbHelper.getInstance().sqlDbHelper != null)) {
+            DbHelper.getInstance().sqlDbHelper.onDestroy();
+        }
     }
 }
