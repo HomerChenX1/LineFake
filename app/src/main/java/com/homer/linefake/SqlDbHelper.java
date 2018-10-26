@@ -65,8 +65,8 @@ public class SqlDbHelper extends SQLiteOpenHelper {
         int deleteFriend(int ownerId, int masterId) {
             //SQLiteDatabase db = getWritableDatabase();
             int temp = -1;
-            String whereClause1 = "( " + nCOLS[0] + " = ? and " + nCOLS[1] + " = ? " + " )";
-            String whereClause2 = "( " + nCOLS[1] + " = ? and " + nCOLS[0] + " = ? " + " )";
+            String whereClause1 = "( " + nCOLS[0] + " = ? and " + nCOLS[1] + " = ? " + ")";
+            String whereClause2 = "( " + nCOLS[1] + " = ? and " + nCOLS[0] + " = ? " + ")";
             String whereClause = whereClause1 + " OR " +whereClause2;
             String[] whereArgs = {String.valueOf(ownerId), String.valueOf(masterId), String.valueOf(ownerId), String.valueOf(masterId)};
             temp = db.delete(TABLE_NAME, whereClause, whereArgs); // return value is the deleted count
@@ -135,6 +135,14 @@ public class SqlDbHelper extends SQLiteOpenHelper {
             String[] whereArgs = {String.valueOf(mbrId), String.valueOf(mbrId)};
             int temp = db.delete(TABLE_NAME, whereClause, whereArgs); // return value is the deleted count
             Log.d("HomersqlDeleteChatMbr ", whereClause + ":" + temp);
+        }
+        void deleteChatMsgByMbrId(int ownerId, int mbrId){
+            String whereClause1 = "(MBRIDFROM = ? AND MBRIDTO = ?) ";
+            String whereClause = whereClause1 + "OR " + whereClause1;
+            String[] whereArgs = {String.valueOf(ownerId), String.valueOf(mbrId),
+                    String.valueOf(mbrId), String.valueOf(ownerId) };
+            int temp = db.delete(TABLE_NAME, whereClause, whereArgs); // return value is the deleted count
+            Log.d("HomersqlDeleteChatMbr2 ", whereClause + ":" + temp);
         }
 
         ArrayList<ChatMsg> generateChannel(int masterId, int ownerId){

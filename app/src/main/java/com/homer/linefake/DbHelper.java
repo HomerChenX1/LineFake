@@ -150,6 +150,18 @@ class DbHelper {
         }
         chatMsgTable.removeAll(tempList);
     }
+    void deleteChatMsgByMbrId(int ownerId, int mbrId){
+        if(useSQL==1){
+            sqlDbHelper.chatMsgTable.deleteChatMsgByMbrId(ownerId, mbrId);
+            return;
+        }
+        ArrayList<ChatMsg> tempList = new ArrayList<>();
+        for(ChatMsg x : chatMsgTable){
+            if((x.getMbrIdFrom()==ownerId)&&(x.getMbrIdTo()==mbrId)) tempList.add(x);
+            if((x.getMbrIdFrom()==mbrId)&&(x.getMbrIdTo()==ownerId)) tempList.add(x);
+        }
+        chatMsgTable.removeAll(tempList);
+    }
 
     void initDbHelper(){
         // create DB if DB not exist
@@ -290,6 +302,8 @@ class DbHelper {
             i = deleteFriendList(memberId);
             // del friendTable
             i = deleteFriend(owner.getMbrID(),memberId);
+            // TODO: need to delete chatMsgTable by member.getMbrID() and owner.getMbrID()
+            deleteChatMsgByMbrId(owner.getMbrID(), memberId);
         }
         return i;
     }
