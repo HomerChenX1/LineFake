@@ -1,16 +1,19 @@
 package com.homer.linefake;
 
+import android.util.Log;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 class DbHelper {
     static MemberWithFriend owner = new MemberWithFriend();
     static ArrayList<Member> friendList = new ArrayList<>(); // gather info from friendSet
-    // public static ArrayList<ChatMsg> channel = new ArrayList<>(); // only contains ChatMsg between owner and master
     static Member master = new Member();
     static Member guest = new Member();
     private ArrayList<Member> memberTable = new ArrayList<>();
     private ArrayList<Integer []> friendTable = new ArrayList<>();
     private ArrayList<ChatMsg> chatMsgTable = new ArrayList<>();
+    static int multipleBack = 0;
 
     static int useSQL = 1; // =0 : use ArrayList, =1 use SQLite
     SqlDbHelper sqlDbHelper = null;
@@ -26,9 +29,19 @@ class DbHelper {
         }
         return ourInstance;
     }
-    void addMember(Member x){ memberTable.add(x); }
+    void addMember(Member x){
+        if(useSQL==1) {
+            sqlDbHelper.memberTable.addMember(x);
+            return;
+        }
+        memberTable.add(x);
+    }
 
+    // MbrID == -1 mean error
     Member queryMemberById(int memberId){
+        if(useSQL==1) {
+            return sqlDbHelper.memberTable.queryMemberById(memberId);
+        }
         Member m = new Member();
         m.setMbrID(-1);
         for(Member x : memberTable){
@@ -41,6 +54,9 @@ class DbHelper {
     }
 
     ArrayList<Member> queryMemberByEmail(String partEmail){
+        if(useSQL==1) {
+            return sqlDbHelper.memberTable.queryMemberByEmail(partEmail,false);
+        }
         ArrayList<Member> mList = new ArrayList<>();
         for(Member x : memberTable){
             if(x.getMbrEmail().contains(partEmail)){
@@ -51,8 +67,26 @@ class DbHelper {
         }
         return mList;
     }
+    ArrayList<Member> queryMemberByEmailExact(String Email){
+        if(useSQL==1) {
+            return sqlDbHelper.memberTable.queryMemberByEmail(Email,true);
+        }
+        ArrayList<Member> mList = new ArrayList<>();
+        for(Member x : memberTable){
+            if(x.getMbrEmail().equals(Email)){
+                Member m = new Member();
+                x.copyTo(m);
+                mList.add(m);
+            }
+        }
+        return mList;
+    }
 
     void updateMember(Member input){
+        if(useSQL==1) {
+            sqlDbHelper.memberTable.updateMember(input);
+            return;
+        }
         int memberId = input.getMbrID();
         for(Member x:memberTable){
             if(x.getMbrID() == memberId){
@@ -63,6 +97,10 @@ class DbHelper {
     }
 
     void deleteMember(int memberId){
+        if(useSQL==1) {
+            sqlDbHelper.memberTable.deleteMember(memberId);
+            return;
+        }
         for(Member x:memberTable){
             if(x.getMbrID() == memberId){
                 memberTable.remove(x);
@@ -207,29 +245,40 @@ class DbHelper {
     }
 
     int doEmailLogin(Member obj){
-        String objEmail = obj.getMbrEmail();
-        int idx = 0;
-        for(; idx < memberTable.size() ;idx++){
-            if(memberTable.get(idx).getMbrEmail().equals(objEmail))
+        ArrayList<Member> temp = queryMemberByEmailExact(obj.getMbrEmail());
+        switch (temp.size()){
+            case 0:
+                return 1; // not found
+            case 1:
+                // found
+                if(temp.get(0).getMbrPassword().equals(obj.getMbrPassword())){
+                    temp.get(0).copyTo(obj);
+                }
+                else return 2; // pwd is incorrect
                 break;
+            default:
+                // somthing wrong, Members are duplicate
+                Log.d("HomersqlEmailLog","Members are duplicate");
+                return 1; // e-mail is incorrect
         }
-        if(idx >= memberTable.size())
-            return 1; // not found
-        if(memberTable.get(idx).getMbrPassword().equals(obj.getMbrPassword()))
-            memberTable.get(idx).copyTo(obj);
-        else return 2; // pwd is incorrect
+
+//        int idx = 0;
+//        for(; idx < memberTable.size() ;idx++){
+//            if(memberTable.get(idx).getMbrEmail().equals(objEmail))
+//                break;
+//        }
+//        if(idx >= memberTable.size())
+//            return 1; // not found
+//        if(memberTable.get(idx).getMbrPassword().equals(obj.getMbrPassword()))
+//            memberTable.get(idx).copyTo(obj);
+//        else return 2; // pwd is incorrect
+
+
         obj.copyTo(owner);
         // build owner.friendSet from friendTable
         owner.clearFriendSet(); // for backpress error
         friendList.clear();
-        // channel.clear();
 
-//        int src = owner.getMbrID();
-//        for (Integer[] x : friendTable) {
-//            if (src == x[0]) {
-//                owner.setFriendSet(x[1]);
-//            }
-//        }
         for(int i : queryFriend(owner.getMbrID())){
             owner.setFriendSet(i);
         }
@@ -302,8 +351,7 @@ class DbHelper {
             i = deleteFriendList(memberId);
             // del friendTable
             i = deleteFriend(owner.getMbrID(),memberId);
-            // TODO: need to delete chatMsgTable by member.getMbrID() and owner.getMbrID()
-            deleteChatMsgByMbrId(owner.getMbrID(), memberId);
+
         }
         return i;
     }

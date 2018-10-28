@@ -85,6 +85,11 @@ public class InfoActivity extends AppCompatActivity {
     protected void onRestart() {
         // for backpress button
         super.onRestart();
+        if(DbHelper.multipleBack>0){
+            // For member deleted
+            --DbHelper.multipleBack;
+            finish();
+        }
         Toast.makeText(this,"onRestart wakeup!" ,Toast.LENGTH_LONG).show();
         vIcon.setImageResource(DbHelper.owner.getMbrIconIdx());
         vAlias.setText(DbHelper.owner.getMbrAlias());

@@ -9,6 +9,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import static com.homer.linefake.DbHelper.owner;
 
 public class MemberActivity extends AppCompatActivity {
@@ -108,13 +110,25 @@ public class MemberActivity extends AppCompatActivity {
             if (temp != 0) {
                 vFocus = vEmail;
                 cancel = true;
-            } else DbHelper.owner.setMbrEmail(email);
+            }
+            else {
+                // make sure e-mail unique
+                if(DbHelper.getInstance().queryMemberByEmailExact(email).size() != 0){
+                    temp = 3;
+                    vFocus = vEmail;
+                    cancel = true;
+                }
+                else DbHelper.owner.setMbrEmail(email);
+            }
             switch (temp) {
                 case 1:
                     vEmail.setError(getString(R.string.error_field_required));
                     break;
                 case 2:
                     vEmail.setError(getString(R.string.error_invalid_email));
+                    break;
+                case 3:
+                    vEmail.setError(getString(R.string.error_duplicate_email));
             }
         }
 
@@ -187,10 +201,15 @@ public class MemberActivity extends AppCompatActivity {
         Toast.makeText(view.getContext(), "Need check in SQLite", Toast.LENGTH_LONG).show();
         restart();
     }
-    void restart(){
+    void restart1(){
         Intent i = getBaseContext().getPackageManager()
                 .getLaunchIntentForPackage( getBaseContext().getPackageName() );
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);
+    }
+    void restart(){
+        // use multiple backpress
+        DbHelper.multipleBack = 1;
+        finish();
     }
 }

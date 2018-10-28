@@ -82,6 +82,9 @@ public class FriendsActivity extends AppCompatActivity {
                 // int i = DbHelper.getInstance().deleteFriendOfOwner(member.getMbrID());
                 //Toast.makeText(this, String.valueOf(i) + ":" + " Del", Toast.LENGTH_SHORT).show();
                 DbHelper.getInstance().deleteFriendOfOwner(member.getMbrID());
+
+                DbHelper.getInstance().deleteChatMsgByMbrId(DbHelper.owner.getMbrID(), member.getMbrID());
+
                 friendAdapter.refresh(DbHelper.friendList);
                 break;
             case 2:

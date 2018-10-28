@@ -6,13 +6,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".ChannelActivity">
+
     <TextView
+        android:id="@+id/channel_messages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/channel_messages"
-        android:text="@string/xml_textview"
         android:background="@color/colorBG2"
-        android:lines="3" />
+        android:lines="3"
+        android:text="@string/xml_textview"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"

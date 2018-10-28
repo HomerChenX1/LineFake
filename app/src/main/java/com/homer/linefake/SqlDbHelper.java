@@ -13,6 +13,7 @@ public class SqlDbHelper extends SQLiteOpenHelper {
     private static final int DB_VERSION = 1;
     FriendTable friendTable = new FriendTable();
     ChatMsgTable chatMsgTable = new ChatMsgTable();
+    MemberTable memberTable = new MemberTable();
     private SQLiteDatabase db;
 
     class FriendTable {
@@ -70,7 +71,7 @@ public class SqlDbHelper extends SQLiteOpenHelper {
             String whereClause = whereClause1 + " OR " +whereClause2;
             String[] whereArgs = {String.valueOf(ownerId), String.valueOf(masterId), String.valueOf(ownerId), String.valueOf(masterId)};
             temp = db.delete(TABLE_NAME, whereClause, whereArgs); // return value is the deleted count
-            Log.d("HomersqlDeleteFriend : ", whereClause + ":" + temp);
+            //Log.d("HomersqlDeleteFriend", whereClause + ":" + temp);
             return temp;
         }
         //query
@@ -92,6 +93,7 @@ public class SqlDbHelper extends SQLiteOpenHelper {
         }
         //update
     }
+
     class ChatMsgTable extends FriendTable {
 
         ChatMsgTable() {
@@ -134,7 +136,7 @@ public class SqlDbHelper extends SQLiteOpenHelper {
             String whereClause = "(MBRIDFROM = ?) or (MBRIDTO  = ?)";
             String[] whereArgs = {String.valueOf(mbrId), String.valueOf(mbrId)};
             int temp = db.delete(TABLE_NAME, whereClause, whereArgs); // return value is the deleted count
-            Log.d("HomersqlDeleteChatMbr ", whereClause + ":" + temp);
+            // Log.d("HomersqlDeleteChatMbr ", whereClause + ":" + temp);
         }
         void deleteChatMsgByMbrId(int ownerId, int mbrId){
             String whereClause1 = "(MBRIDFROM = ? AND MBRIDTO = ?) ";
@@ -142,7 +144,7 @@ public class SqlDbHelper extends SQLiteOpenHelper {
             String[] whereArgs = {String.valueOf(ownerId), String.valueOf(mbrId),
                     String.valueOf(mbrId), String.valueOf(ownerId) };
             int temp = db.delete(TABLE_NAME, whereClause, whereArgs); // return value is the deleted count
-            Log.d("HomersqlDeleteChatMbr2 ", whereClause + ":" + temp);
+            // Log.d("HomersqlDeleteChatMbr2 ", whereClause + ":" + temp);
         }
 
         ArrayList<ChatMsg> generateChannel(int masterId, int ownerId){
@@ -173,7 +175,126 @@ public class SqlDbHelper extends SQLiteOpenHelper {
         }
     }
 
-    public SqlDbHelper(Context context) {
+    class MemberTable extends FriendTable {
+
+        MemberTable() {
+            TABLE_NAME = "MemberTable";
+            TABLE_COLS = "( " + "MBRID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "MBRICONIDX INTEGER NOT NULL, " +
+                    "MBRALIAS TEXT NOT NULL, " +
+                    "MBRPHONE TEXT NOT NULL, " +
+                    "MBREMAIL TEXT NOT NULL, " +
+                    "MBRPASSWORD TEXT NOT NULL " +
+                    " );";
+            genTABLE_CREATE();
+            nCOLS = new String[] {"MBRID","MBRICONIDX","MBRALIAS","MBRPHONE",
+                    "MBREMAIL","MBRPASSWORD"};
+        }
+
+        @Override
+        public String toString() {
+            return "MemberTable{" +
+                    "CREATE='" + TABLE_CREATE + '\'' +
+                    '}';
+        }
+
+        void addMember(Member x){
+            ContentValues values = new ContentValues();
+            // values.put(nCOLS[0], x.getMbrId());
+            // TODO: modify getMbrIconIdx
+            values.put(nCOLS[1], 0);
+            values.put(nCOLS[2], x.getMbrAlias());
+            values.put(nCOLS[3], x.getMbrPhone());
+            values.put(nCOLS[4], x.getMbrEmail());
+            values.put(nCOLS[5], x.getMbrPassword());
+
+            long pKey1 = db.insert(TABLE_NAME, null, values);
+            x.setMbrID((int)pKey1);
+            x.setMbrIconIdx();
+            // Log.d("HomersqlAddMbr", pKey1 + ":" + x.getMbrID()+ ":" + x.getMbrIconIdx());
+        }
+
+        void updateMember(Member x){
+            // UPDATE table_name SET column1 = value1, column2 = value2...., columnN = valueN WHERE [condition];
+            ContentValues values = new ContentValues();
+            values.put(nCOLS[1], x.getMbrIconIdx());
+            values.put(nCOLS[2], x.getMbrAlias());
+            values.put(nCOLS[3], x.getMbrPhone());
+            values.put(nCOLS[4], x.getMbrEmail());
+            values.put(nCOLS[5], x.getMbrPassword());
+
+            String whereClause = "MBRID = ?";
+            String[] whereArgs = { String.valueOf(x.getMbrID())};
+            int i = db.update(TABLE_NAME, values, whereClause, whereArgs);
+            //Log.d("HomersqlUpdMbr", whereClause + ":" + x.getMbrID()+ ":" + i);
+        }
+
+        void deleteMember(int memberId){
+            String whereClause = "MBRID = ?";
+            String[] whereArgs = {String.valueOf(memberId) };
+            int temp = db.delete(TABLE_NAME, whereClause, whereArgs); // return value is the deleted count
+            // Log.d("HomersqlDeleteMbr ", whereClause + ":" + temp);
+        }
+
+        Member queryMemberById(int memberId){
+            ArrayList<Member> temp = new ArrayList<>();
+            String whereClause = "MBRID = ?";
+            String[] selArgs = {String.valueOf(memberId) };
+
+            Cursor cursor = db.query(TABLE_NAME, nCOLS, whereClause,
+                    selArgs, null, null, null, null);
+            while (cursor.moveToNext()) {
+                Member m = new Member();
+                m.setMbrID(cursor.getInt(0));
+                // TODO modify setMbrIconIdx , cursor.getInt(1)
+                m.setMbrIconIdx();
+                m.setMbrAlias(cursor.getString(2));
+                m.setMbrPhone(cursor.getString(3));
+                m.setMbrEmail(cursor.getString(4));
+                m.setMbrPassword(cursor.getString(5));
+                temp.add(m);
+            }
+            //Log.d("HomersqlQueryMbrID ", whereClause + ":" + temp.size());
+            // temp.size() must be 1 because memberId is unique. If zero, nothing find
+            if(temp.size() == 0){
+                Member m = new Member();
+                m.setMbrID(-1);
+                temp.add(m);
+            }
+            return temp.get(0);
+        }
+
+        ArrayList<Member> queryMemberByEmail(String partEmail,boolean exact){
+            ArrayList<Member> temp = new ArrayList<>();
+            String whereClause = "MBREMAIL LIKE ?";
+            String[] selArgs = { "%" + partEmail + "%"};
+            if(exact){
+                whereClause = "MBREMAIL = ?" ;
+                selArgs = new String[] { partEmail };
+            }
+
+            Cursor cursor = db.query(TABLE_NAME, nCOLS, whereClause,
+                    selArgs, null, null, null, null);
+
+            while (cursor.moveToNext()) {
+                Member m = new Member();
+                m.setMbrID(cursor.getInt(0));
+                // TODO modify setMbrIconIdx , cursor.getInt(1)
+                m.setMbrIconIdx();
+                m.setMbrAlias(cursor.getString(2));
+                m.setMbrPhone(cursor.getString(3));
+                m.setMbrEmail(cursor.getString(4));
+                m.setMbrPassword(cursor.getString(5));
+                temp.add(m);
+            }
+            // Log.d("HomersqlQueryEmail ", whereClause + ":" + temp.size());
+            return temp;
+        }
+
+    }
+
+
+        public SqlDbHelper(Context context) {
         //Context context, String name, SQLiteDatabase.CursorFactory factory, int version
         super(context, DB_NAME, null, DB_VERSION);
     }
@@ -182,12 +303,14 @@ public class SqlDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         friendTable.create(db);
         chatMsgTable.create(db);
+        memberTable.create(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         friendTable.upgradeTable(db, oldVersion, newVersion);
         chatMsgTable.upgradeTable(db, oldVersion, newVersion);
+        memberTable.upgradeTable(db, oldVersion, newVersion);
     }
 
     public SQLiteDatabase getDb() { return db; }
@@ -197,5 +320,7 @@ public class SqlDbHelper extends SQLiteOpenHelper {
     }
 
     // put into onDestroy() in the activity
-    void onDestroy(){ close(); }
+    void onDestroy(){
+        close();
+    }
 }

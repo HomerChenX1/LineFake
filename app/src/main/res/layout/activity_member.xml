@@ -14,7 +14,7 @@
         android:background="#DDDDFF"
         android:lines="5"
         android:text="Hello World!"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
     <ScrollView
         android:layout_width="match_parent"

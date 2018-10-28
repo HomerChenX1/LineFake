@@ -8,6 +8,7 @@
     <string name="action_sign_in">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_not_exist_email">This email address is not existed</string>
+    <string name="error_duplicate_email">This email address is duplicate</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
@@ -46,5 +47,5 @@
     <!-- Strings related to chnAdapter -->
     <string name="prompt_chn_block_item">Block Item</string>
     <string name="action_chn_block_item">No implement now</string>
-    <string name="action_chn_list_title">"Channel: long click to select delete"</string>
+    <string name="action_chn_list_title">"Channel: long click to select delete on text message."</string>
 </resources>

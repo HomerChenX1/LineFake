@@ -140,18 +140,20 @@ public class MainActivity extends AppCompatActivity {
             sb.append("ID:").append(DbHelper.guest.getMbrID()).append(" ICON:").append(DbHelper.guest.getMbrIconIdx())
                     .append(" Alias:").append(DbHelper.guest.getMbrAlias()).append(" Phone:").append(DbHelper.guest.getMbrPhone())
                     .append(" EMail:").append(DbHelper.guest.getMbrEmail()).append(" Pwd:").append(DbHelper.guest.getMbrPassword())
-                    .append("owner friends:").append(DbHelper.owner.getFriendSet().length);
+                    .append(" Owner friends:").append(DbHelper.owner.getFriendSet().length);
             vMessages.setText(sb.toString());
             showProgress(false);
             switch(x){
                 case 1:
                     Toast.makeText(this,"E-Mail not found !",Toast.LENGTH_LONG).show();
                     vEmail.setError(getString(R.string.error_not_exist_email));
+                    vMessages.setText("");
                     vEmail.requestFocus();
                     break;
                 case 2:
                     Toast.makeText(this,"wrong PWD !",Toast.LENGTH_LONG).show();
                     vPassword.setError(getString(R.string.error_incorrect_password));
+                    vMessages.setText("");
                     vPassword.requestFocus();
                     break;
                 default:

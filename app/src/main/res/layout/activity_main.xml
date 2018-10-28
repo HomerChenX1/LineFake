@@ -80,11 +80,12 @@
         android:onClick="onClickRegister"/>
 
     <TextView
+        android:id="@+id/login_messages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/login_messages"
-        android:text="Hello World!"
         android:background="#DDDDFF"
-        android:lines="5" />
+        android:lines="5"
+        android:text="Hello World!"
+        android:visibility="gone" />
 
 </LinearLayout>

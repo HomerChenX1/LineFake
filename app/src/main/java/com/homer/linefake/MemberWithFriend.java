@@ -4,9 +4,9 @@ import android.text.TextUtils;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Locale;
+//import java.util.Locale; induce no affect, do not know why
 import java.util.Set;
-// import java.util.TimeZone;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -191,8 +191,8 @@ class ChatMsg {
 
     String getTimeStart() {
         // SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.sss");
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.TAIWAN);
-        // sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT+08:00"));
         //String sd = sdf.format(new Date(Long.parseLong(String.valueOf(timeStart))));
         //return sd;
         return sdf.format(new Date(Long.parseLong(String.valueOf(timeStart))));
