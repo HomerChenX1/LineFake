@@ -18,15 +18,29 @@ class FireDbHelper {
 
         void create(){
             ArrayList<String> temp = new ArrayList();
+            //TODO check table exist or not ?
 
             DatabaseReference myRef = db.getReference(TABLE_NAME + "/nCOLS");
             for(String s: nCOLS) temp.add(s);
             myRef.setValue(temp);
         }
 
-        void addFriend(int ownerId, int masterId){}
-        int deleteFriend(int ownerId, int masterId) { return 0;}
-        Integer[] queryFriend(int ownerId){ return new Integer[] {0,1,2,3};}
+        void addFriend(int ownerId, int masterId){
+            // to ownerId's friend add masterId
+            // to masterId's friend add ownerId
+            // TODO send notify to masterId that ownerId is add
+        }
+        int deleteFriend(int ownerId, int masterId) {
+            // to ownerId's friend delete masterId
+            // build query then delete
+            // to masterId's friend delete ownerId
+            // TODO send notify to masterId that owneridis disappear
+            return 0;
+        }
+        Integer[] queryFriend(int ownerId){
+            // read ownerId's friend then send out
+            return new Integer[] {0,1,2,3};
+        }
     }
 
     public FireDbHelper() {
