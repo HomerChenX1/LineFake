@@ -7,6 +7,8 @@ import android.widget.TextView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+
 public class FirebaseActivity extends AppCompatActivity {
     private TextView vMessages;
     private StringBuilder msgBody = new StringBuilder();
@@ -26,13 +28,13 @@ public class FirebaseActivity extends AppCompatActivity {
 //        DatabaseReference myRef = database.getReference("message");
 //
 //        myRef.setValue("Hello, World!");
-        DatabaseReference myRef = database.getReference("memberTable");
-        myRef = database.getReference("friendTable");
-        myRef.setValue("Hello, World!");
-        myRef = database.getReference("chatMsgTable");
-        myRef.setValue("Hello, World!");
-        myRef = database.getReference("rcvBus");
-        myRef.setValue("Hello, World!");
+        DatabaseReference myRef = database.getReference();
+        ArrayList<String> test = new ArrayList<>();
+        test.add("memberTable");
+        test.add("friendTable");
+        test.add("chatMsgTable");
+        test.add("receiveBus");
+        myRef.setValue(test);
 
     }
 
