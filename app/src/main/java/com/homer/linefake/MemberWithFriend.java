@@ -21,6 +21,7 @@ class Member {
     private static final String EMAIL_PATTERN = "^[a-zA-Z0-9#_~!$&'()*+,;=:.\"(),:;<>@\\[\\]\\\\]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*$";
     private static Pattern pattern = Pattern.compile(EMAIL_PATTERN);
 
+    public Member() { super();}
     int getMbrID() { return mbrID; }
     Member setMbrID(int mbrID) {
         this.mbrID = mbrID;
@@ -131,6 +132,8 @@ class Member {
 
 class MemberWithFriend extends Member {
     private Set<Integer> friendSet = new HashSet<>();
+
+    public MemberWithFriend() { super(); }
 
     Integer[] getFriendSet() { return friendSet.toArray(new Integer[0]); }
     Member setFriendSet(Integer x) {

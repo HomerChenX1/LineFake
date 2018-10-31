@@ -15,9 +15,8 @@ class DbHelper {
     private ArrayList<ChatMsg> chatMsgTable = new ArrayList<>();
     static int multipleBack = 0;
 
-    static int useSQL = 1; // =0 : use ArrayList, =1 use SQLite
+    static int useSQL = 0; // =0 : use ArrayList, =1 use SQLite
     SqlDbHelper sqlDbHelper = null;
-
 
     private static DbHelper ourInstance;
 
@@ -388,5 +387,12 @@ class DbHelper {
             }
         }
         return temp;
+    }
+    void resetDbHelper(){
+        owner = new MemberWithFriend();
+        master = new Member();
+        guest = new Member();
+        multipleBack = 0;
+        friendList.clear();
     }
 }

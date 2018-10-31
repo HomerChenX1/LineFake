@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "507548223174",
+    "firebase_url": "https://linefake-ad479.firebaseio.com",
+    "project_id": "linefake-ad479",
+    "storage_bucket": "linefake-ad479.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:507548223174:android:c273f9f53eaac957",
+        "android_client_info": {
+          "package_name": "com.homer.linefake"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "507548223174-v3ljua0ms2t553uv50ug4qb8774q1agc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.homer.linefake",
+            "certificate_hash": "7a30ca1ea246cac9effeb5a453220ca2d781a7b0"
+          }
+        },
+        {
+          "client_id": "507548223174-equ4vhlh3rchvcitd1bgfbv1ouffmlj5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBjPVCbHOA-hDDBJZ52L4SAxqYGX8gFj4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "507548223174-equ4vhlh3rchvcitd1bgfbv1ouffmlj5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

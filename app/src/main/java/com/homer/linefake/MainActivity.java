@@ -175,11 +175,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestart() {
         // for backpress button, keep login empty
         super.onRestart();
-        Toast.makeText(this,"onRestart wakeup!" ,Toast.LENGTH_LONG).show();
+        // Toast.makeText(this,"onRestart wakeup!" ,Toast.LENGTH_LONG).show();
+        //clean screen
         vEmail.setText("");
         vPassword.setText("");
         vMessages.setText("");
         vEmail.requestFocus();
+        //clean memory
+        DbHelper.getInstance().resetDbHelper();
     }
 
     public void onClickRegister(View view){
@@ -194,5 +197,10 @@ public class MainActivity extends AppCompatActivity {
         if((DbHelper.useSQL==1) && (DbHelper.getInstance().sqlDbHelper != null)) {
             DbHelper.getInstance().sqlDbHelper.onDestroy();
         }
+    }
+
+    public void onClickFireBase(View view){
+        Intent intent = new Intent(this, FirebaseActivity.class);
+        startActivity(intent);
     }
 }
