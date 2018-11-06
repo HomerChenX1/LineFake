@@ -1,6 +1,9 @@
 package com.homer.linefake;
 
 import android.text.TextUtils;
+
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
