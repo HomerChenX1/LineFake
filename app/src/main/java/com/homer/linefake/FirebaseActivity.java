@@ -52,8 +52,11 @@ public class FirebaseActivity extends AppCompatActivity {
             fireDbHelper.chatMsgTable.addChat(new ChatMsg(3, 2, ChatMsg.chatTypeText, "OK32!"));
             // fireDbHelper.chatMsgTable.deleteChat(testChatMsg.getChatId());
             // Log.d("HomerfbDeleteChat", "idcmd=" + testChatMsg.getChatId());
+            // fireDbHelper.chatMsgTable.deleteChatMsgByMbrId(1);
         }
-        fireDbHelper.chatMsgTable.deleteChatMsgByMbrId(1);
+
+        fireDbHelper.chatMsgTable.deleteChatMsgByMbrId(1,2);
+        //fireDbHelper.chatMsgTable.generateChannel(1,2);
         // new QueryFriendCheckEnd(this).execute("queryFriend");
         // new QueryFriendCheckEnd(this).execute("queryFriend");
 

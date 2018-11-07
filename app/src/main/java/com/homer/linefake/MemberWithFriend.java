@@ -1,5 +1,6 @@
 package com.homer.linefake;
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.google.firebase.database.IgnoreExtraProperties;
@@ -150,7 +151,7 @@ class MemberWithFriend extends Member {
     void deleteFriendSet(Integer x){ friendSet.remove(x);}
 }
 
-class ChatMsg {
+class ChatMsg implements Comparable {
     private int chatId;
     private long timeStart;
     // private long timeStop;
@@ -241,6 +242,11 @@ class ChatMsg {
     ChatMsg setTxtMsg(String txtMsg) {
         this.txtMsg = txtMsg;
         return this;
+    }
+
+    @Override
+    public int compareTo(@NonNull Object o) {
+        return  (this.timeStart-((ChatMsg)o).getTimeStartLong())>0? 1 : -1;
     }
 }
 

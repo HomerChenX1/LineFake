@@ -4,20 +4,18 @@ package com.homer.linefake;
 // your-project-id : linefake-ad479
 //Default hosting subdomain — your-project-id.firebaseapp.com
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Collections;
 import java.util.Random;
 
 class FireDbHelper {
@@ -27,10 +25,14 @@ class FireDbHelper {
     int deleteFriendCnt = 0;
     static int queryFriendTotalCount = 100;
     ArrayList<Integer> queryFriendList = new ArrayList<>();
-    static int destChatMsgMbrIdListCnt1 = 100;
-    static int destChatMsgMbrIdListCnt2 = 100;
-    ArrayList<Integer> destChatMsgMbrIdList1 = new ArrayList<>();
-    ArrayList<ChatMsg> destChatMsgMbrIdList2 = new ArrayList<>();
+    
+    static int delChatMsgMbrIdListCnt1 = 100;
+
+    static int delChatMsgMbrIdListCnt2 = 100;
+    static int delChatMsgMbrIdListCnt3 = 100;
+
+    static int genChannelCnt = 100;
+    ArrayList<ChatMsg> genChannelList = new ArrayList<>();
 
     class FriendTable {
         String TABLE_NAME = "FriendTable";
@@ -68,7 +70,7 @@ class FireDbHelper {
             Query query = myRef.child(String.valueOf(ownerId));
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for (DataSnapshot ds: dataSnapshot.getChildren()) {
                         if((long)ds.getValue() == masterId) {
                             deleteFriendCnt++;
@@ -80,7 +82,7 @@ class FireDbHelper {
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(@NonNull DatabaseError databaseError) {
                     Log.d("HomerfbDeleteFriend", "onCancelled", databaseError.toException());
                 }
             });
@@ -89,7 +91,7 @@ class FireDbHelper {
             query = myRef.child(String.valueOf(masterId));
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for (DataSnapshot ds: dataSnapshot.getChildren()) {
                         if((long)ds.getValue() == ownerId) {
                             deleteFriendCnt++;
@@ -101,7 +103,7 @@ class FireDbHelper {
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(@NonNull DatabaseError databaseError) {
                     Log.d("HomerfbDeleteFriend", "onCancelled", databaseError.toException());
                 }
             });
@@ -118,7 +120,7 @@ class FireDbHelper {
             Query query = myRef.child(String.valueOf(ownerId));
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     queryFriendTotalCount = (int) dataSnapshot.getChildrenCount();
                     // Log.d("HomerfbQueryFriend", "total cnt:" + queryFriendTotalCount);
                     for (DataSnapshot ds: dataSnapshot.getChildren()) {
@@ -129,7 +131,7 @@ class FireDbHelper {
                     }
                 }
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(@NonNull DatabaseError databaseError) {
                     Log.d("HomerfbQueryFriend", "onCancelled", databaseError.toException());
                 }
             });
@@ -161,16 +163,16 @@ class FireDbHelper {
         }
         void deleteChatMsgByMbrId(final int mbrId){
             // ArrayList<ChatMsg> destChatMsgMbrIdList1 destChatMsgMbrIdList2
-            destChatMsgMbrIdListCnt1 = 100;
+            delChatMsgMbrIdListCnt1 = 100;
             // search x.getMbrIdFrom()==mbrId or
             DatabaseReference myRef = db.getReference(TABLE_NAME);
             myRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    destChatMsgMbrIdListCnt1 = (int) dataSnapshot.getChildrenCount();
-                    Log.d("HomerfbDelChatMsgMbrId", "total cnt:" + destChatMsgMbrIdListCnt1);
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    delChatMsgMbrIdListCnt1 = (int) dataSnapshot.getChildrenCount();
+                    // Log.d("HomerfbDelChatMsgMbrId", "total cnt:" + delChatMsgMbrIdListCnt1);
                     for (DataSnapshot ds: dataSnapshot.getChildren()) {
-                        destChatMsgMbrIdListCnt1--;
+                        delChatMsgMbrIdListCnt1--;
                         // have key = ds.getKey()
                         // Now only item by item read,
                         // Integer temp = ds.child("chatId").getValue(Integer.class);
@@ -186,38 +188,127 @@ class FireDbHelper {
                             temp.setMbrIdTo(ds.child("mbrIdTo").getValue(Integer.class));
                             temp.setChatType(ds.child("chatType").getValue(Integer.class));
                             temp.setTxtMsg(ds.child("txtMsg").getValue(String.class));
-                            Log.d("HomerfbDelChatMsgMbrId", temp.toString());
+                            // Log.d("HomerfbDelChatMsgMbrId", temp.toString());
                         }
-
-
-
-
-//                        ChatMsg temp = ds.child(ds.getKey()).getValue(ChatMsg.class);
-//
-//                        if((temp.getMbrIdTo()==mbrId) || temp.getMbrIdFrom()==mbrId){
-//                            destChatMsgMbrIdList1.add(temp.getChatId());
-//                            Log.d("HomerfbDelChatMsgMbrId", "cnt:" + destChatMsgMbrIdList1.size() + ":" + ":" + destChatMsgMbrIdListCnt1);
-//                            Log.d("HomerfbDelChatMsgMbrId", "From:" + temp.getMbrIdFrom() + "To:" + temp.getMbrIdTo());
-//                        }
                     }
                 }
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(@NonNull DatabaseError databaseError) {
                     Log.d("HomerfbQueryFriend", "onCancelled", databaseError.toException());
                 }
             });
 
-
-            // search x.getMbrIdTo()==mbrId
-            destChatMsgMbrIdListCnt2 = 100;
-
         }
-        void deleteChatMsgByMbrId(int ownerId, int mbrId){
-            // ownerId,  mbrId
-            // mbrId ownerId
+
+        void deleteChatMsgByMbrId(final int ownerId, final int mbrId){
+            delChatMsgMbrIdListCnt2 = 100;
+            DatabaseReference myRef = db.getReference(TABLE_NAME);
+            myRef.orderByChild("mbrIdFrom").equalTo(ownerId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    delChatMsgMbrIdListCnt2 = (int) dataSnapshot.getChildrenCount();
+                    // Log.d("HomerfbDelChatMsgMbrId2", "total cnt:" + delChatMsgMbrIdListCnt2 );
+                    for (DataSnapshot ds: dataSnapshot.getChildren()) {
+                        --delChatMsgMbrIdListCnt2;
+//                        if(delChatMsgMbrIdListCnt2==0)
+//                            Log.d("HomerfbDelChatMsgMbrId2","End");
+                        try {
+                            //mbrIdTo == mbrId
+                            int pKey = ds.child("mbrIdTo").getValue(Integer.class);
+                            if (pKey == mbrId) {
+                                //Log.d("HomerfbDelChatMsgMbrId2", "Id:"+ ds.child("chatId").getValue(Integer.class) +":"+delChatMsgMbrIdListCnt2);
+                                ds.getRef().removeValue();
+                            }
+                        }catch(NullPointerException e){
+                            continue;
+                        }
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d("HomerfbDelChatMsgMbrId2", "onCancelled", databaseError.toException());
+                    }
+                });
+
+            delChatMsgMbrIdListCnt3 = 100;
+            myRef.orderByChild("mbrIdTo").equalTo(ownerId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    delChatMsgMbrIdListCnt3 = (int) dataSnapshot.getChildrenCount();
+                    //Log.d("HomerfbDelChatMsgMbrId3", "total cnt:" + delChatMsgMbrIdListCnt3 );
+                    for (DataSnapshot ds: dataSnapshot.getChildren()) {
+                        --delChatMsgMbrIdListCnt3;
+//                        if(delChatMsgMbrIdListCnt3==0)
+//                            Log.d("HomerfbDelChatMsgMbrId3","End");
+                        try {
+                            int pKey = ds.child("mbrIdFrom").getValue(Integer.class);
+                            if (pKey == mbrId) {
+                                //Log.d("HomerfbDelChatMsgMbrId3", "Id:"+ ds.child("chatId").getValue(Integer.class)+":"+delChatMsgMbrIdListCnt3);
+                                ds.getRef().removeValue();
+                            }
+                        }catch(NullPointerException e){
+                            continue;
+                        }
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d("HomerfbDelChatMsgMbrId3", "onCancelled", databaseError.toException());
+                }
+            });
         }
-        ArrayList<ChatMsg> generateChannel(int masterId, int ownerId){
-            return null;
+
+
+        ArrayList<ChatMsg> generateChannel(final int masterId, final int ownerId){
+            /*
+                    static int genChannelCnt = 100;
+                    ArrayList<ChatMsg> genChannelList = new ArrayList<>();
+                    */
+            genChannelCnt = 100;
+            DatabaseReference myRef = db.getReference(TABLE_NAME);
+
+            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d("HomerfbGenChannel", "onCancelled", databaseError.toException());
+                }
+
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    genChannelCnt = (int) dataSnapshot.getChildrenCount();
+                    // Log.d("HomerfbGenChannel", "total cnt:" + genChannelCnt );
+                    for (DataSnapshot ds: dataSnapshot.getChildren()) {
+                        --genChannelCnt;
+                        try {
+                            int pKey1 = ds.child("mbrIdFrom").getValue(Integer.class);
+                            int pKey2 = ds.child("mbrIdTo").getValue(Integer.class);
+                            if ((pKey1 == ownerId && pKey2 == masterId) || (pKey2 == ownerId && pKey1 == masterId)) {
+                                //Log.d("HomerfbGenChannel", "From:" + pKey1 + " To:" + pKey2);
+
+                                ChatMsg temp = new ChatMsg();
+                                temp.setChatId(ds.child("chatId").getValue(Integer.class));
+                                temp.setTimeStart(ds.child("timeStartLong").getValue(Long.class));
+                                temp.setMbrIdFrom(ds.child("mbrIdFrom").getValue(Integer.class));
+                                temp.setMbrIdTo(ds.child("mbrIdTo").getValue(Integer.class));
+                                temp.setChatType(ds.child("chatType").getValue(Integer.class));
+                                temp.setTxtMsg(ds.child("txtMsg").getValue(String.class));
+                                genChannelList.add(temp);
+                            }
+                            //Log.d("HomerfbGenChannel","size:"+genChannelList.size() +":"+genChannelCnt);
+                            if(genChannelCnt<=1){
+                                // sort by timeStart
+                                Collections.sort(genChannelList);
+                                // Log.d("HomerfbGenChannel", genChannelList.get(0).toString());
+                                // Log.d("HomerfbGenChannel", genChannelList.get(1).toString());
+                            }
+                        }catch(NullPointerException e){
+                            continue;
+                        }
+                    }
+                }
+            });
+
+            return genChannelList;
         }
 
     }
@@ -240,7 +331,6 @@ class FireDbHelper {
         int max = Integer.MAX_VALUE - 100 ;
         int min = 1;
         Random rand = new Random();
-        int randomNum = rand.nextInt((max - min) + 1) + min;
-        return randomNum;
+        return rand.nextInt((max - min) + 1) + min;
     }
 }
