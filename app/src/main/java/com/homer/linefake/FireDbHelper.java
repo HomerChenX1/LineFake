@@ -20,6 +20,7 @@ import java.util.Random;
 
 class FireDbHelper {
     private FirebaseDatabase db;
+    MemberTable memberTable = new MemberTable();
     FriendTable friendTable = new FriendTable();
     ChatMsgTable chatMsgTable = new ChatMsgTable();
     int deleteFriendCnt = 0;
@@ -31,9 +32,12 @@ class FireDbHelper {
     static int delChatMsgMbrIdListCnt2 = 100;
     static int delChatMsgMbrIdListCnt3 = 100;
 
-    static int genChannelCnt = 100;
-    ArrayList<ChatMsg> genChannelList = new ArrayList<>();
+    static int genChannelCnt1 = 100;
+    ArrayList<ChatMsg> genChannelList1 = new ArrayList<>();
+    static int genChannelCnt2 = 100;
+    ArrayList<ChatMsg> genChannelList2 = new ArrayList<>();
 
+    /* ********************************************************** */
     class FriendTable {
         String TABLE_NAME = "FriendTable";
         String [] nCOLS = {"mbrId","friendSet"};
@@ -143,6 +147,8 @@ class FireDbHelper {
             return queryFriendList.toArray(new Integer[0]);
         }
     }
+
+    /* ********************************************************** */
     class ChatMsgTable extends FriendTable {
         ChatMsgTable() {
             TABLE_NAME = "ChatMsgTable";
@@ -197,7 +203,6 @@ class FireDbHelper {
                     Log.d("HomerfbQueryFriend", "onCancelled", databaseError.toException());
                 }
             });
-
         }
 
         void deleteChatMsgByMbrId(final int ownerId, final int mbrId){
@@ -258,33 +263,25 @@ class FireDbHelper {
             });
         }
 
-
         ArrayList<ChatMsg> generateChannel(final int masterId, final int ownerId){
-            /*
-                    static int genChannelCnt = 100;
-                    ArrayList<ChatMsg> genChannelList = new ArrayList<>();
-                    */
-            genChannelCnt = 100;
+            genChannelCnt1 = 100;
+            genChannelList1.clear();
+            genChannelCnt2 = 100;
+            genChannelList2.clear();
+
             DatabaseReference myRef = db.getReference(TABLE_NAME);
-
-            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.d("HomerfbGenChannel", "onCancelled", databaseError.toException());
-                }
-
+            myRef.orderByChild("mbrIdFrom").equalTo(ownerId).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    genChannelCnt = (int) dataSnapshot.getChildrenCount();
-                    // Log.d("HomerfbGenChannel", "total cnt:" + genChannelCnt );
+                    genChannelCnt1 = (int) dataSnapshot.getChildrenCount();
+                    //Log.d("HomerfbGenChannel1", "total cnt:" + genChannelCnt1 );
                     for (DataSnapshot ds: dataSnapshot.getChildren()) {
-                        --genChannelCnt;
+                        --genChannelCnt1;
                         try {
-                            int pKey1 = ds.child("mbrIdFrom").getValue(Integer.class);
-                            int pKey2 = ds.child("mbrIdTo").getValue(Integer.class);
-                            if ((pKey1 == ownerId && pKey2 == masterId) || (pKey2 == ownerId && pKey1 == masterId)) {
-                                //Log.d("HomerfbGenChannel", "From:" + pKey1 + " To:" + pKey2);
-
+                            //mbrIdTo == mbrId
+                            int pKey = ds.child("mbrIdTo").getValue(Integer.class);
+                            if (pKey == masterId) {
+                                //Log.d("HomerfbGenChannel1", "Id:"+ ds.child("chatId").getValue(Integer.class) +":"+genChannelCnt1);
                                 ChatMsg temp = new ChatMsg();
                                 temp.setChatId(ds.child("chatId").getValue(Integer.class));
                                 temp.setTimeStart(ds.child("timeStartLong").getValue(Long.class));
@@ -292,27 +289,83 @@ class FireDbHelper {
                                 temp.setMbrIdTo(ds.child("mbrIdTo").getValue(Integer.class));
                                 temp.setChatType(ds.child("chatType").getValue(Integer.class));
                                 temp.setTxtMsg(ds.child("txtMsg").getValue(String.class));
-                                genChannelList.add(temp);
-                            }
-                            //Log.d("HomerfbGenChannel","size:"+genChannelList.size() +":"+genChannelCnt);
-                            if(genChannelCnt<=1){
-                                // sort by timeStart
-                                Collections.sort(genChannelList);
-                                // Log.d("HomerfbGenChannel", genChannelList.get(0).toString());
-                                // Log.d("HomerfbGenChannel", genChannelList.get(1).toString());
+                                genChannelList1.add(temp);
+                                //Log.d("HomerfbGenChannel1",temp.toString());
                             }
                         }catch(NullPointerException e){
                             continue;
                         }
                     }
                 }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d("HomerfbGenChannel1", "onCancelled", databaseError.toException());
+                }
             });
 
-            return genChannelList;
+            myRef.orderByChild("mbrIdFrom").equalTo(masterId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    genChannelCnt2 = (int) dataSnapshot.getChildrenCount();
+                    //Log.d("HomerfbGenChannel2", "total cnt:" + genChannelCnt2 );
+                    for (DataSnapshot ds: dataSnapshot.getChildren()) {
+                        --genChannelCnt2;
+                        try {
+                            //mbrIdTo == mbrId
+                            int pKey = ds.child("mbrIdTo").getValue(Integer.class);
+                            if (pKey == ownerId) {
+                                //Log.d("HomerfbGenChannel2", "Id:"+ ds.child("chatId").getValue(Integer.class) +":"+genChannelCnt2);
+                                ChatMsg temp = new ChatMsg();
+                                temp.setChatId(ds.child("chatId").getValue(Integer.class));
+                                temp.setTimeStart(ds.child("timeStartLong").getValue(Long.class));
+                                temp.setMbrIdFrom(ds.child("mbrIdFrom").getValue(Integer.class));
+                                temp.setMbrIdTo(ds.child("mbrIdTo").getValue(Integer.class));
+                                temp.setChatType(ds.child("chatType").getValue(Integer.class));
+                                temp.setTxtMsg(ds.child("txtMsg").getValue(String.class));
+                                genChannelList2.add(temp);
+                                //Log.d("HomerfbGenChannel2",temp.toString());
+                            }
+                        }catch(NullPointerException e){
+                            continue;
+                        }
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d("HomerfbGenChannel2", "onCancelled", databaseError.toException());
+                }
+            });
+            // need to wait complete when genChannelCnt1==0 and genChannelCnt2==0
+            if((genChannelCnt1==0)&&(genChannelCnt2==0)){
+                genChannelList1.addAll(genChannelList2);
+                Collections.sort(genChannelList1);
+                // Log.d("HomerfbGenChannel", genChannelList1.get(0).toString());
+                // Log.d("HomerfbGenChannel", genChannelList1.get(1).toString());
+            }
+            return genChannelList1;
         }
-
+    }
+    /* ********************************************************** */
+    class MemberTable extends FriendTable {
+        MemberTable() {
+            TABLE_NAME = "MemberTable";
+            nCOLS = new String[]{"mbrID", "mbrIconIdx", "mbrAlias", "mbrPhone", "mbrEmail", "mbrPassword"};
+        }
+        void addMember(Member x){
+            int key = randInt();
+            x.setMbrID(key);
+            x.setMbrIconIdx();
+            DatabaseReference myRef = db.getReference(TABLE_NAME + "/" + String.valueOf(key));
+            myRef.setValue(x);
+            Log.d("HomerfbAddMember", x.toString());
+        }
+        void updateMember(Member x){}
+        void deleteMember(int memberId){}
+        Member queryMemberById(int memberId){ return null; }
+        ArrayList<Member> queryMemberByEmail(String partEmail,boolean exact){ return null; }
     }
 
+    /* ********************************************************** */
     public FireDbHelper() {
         db = FirebaseDatabase.getInstance();
         onCreate();
@@ -322,6 +375,7 @@ class FireDbHelper {
 
     public void onCreate() {
         // build tables
+        memberTable.create();
         friendTable.create();
         chatMsgTable.create();
     }

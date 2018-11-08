@@ -26,6 +26,12 @@ class Member {
     private static Pattern pattern = Pattern.compile(EMAIL_PATTERN);
 
     public Member() { super();}
+
+    public Member(int mbrID, String mbrAlias, String mbrPhone, String mbrEmail, String mbrPassword) {
+        this.setMbrID(mbrID).setMbrIconIdx().setMbrAlias(mbrAlias).setMbrEmail(mbrEmail)
+                .setMbrPassword(mbrPassword).setMbrPhone(mbrPhone);
+    }
+
     int getMbrID() { return mbrID; }
     Member setMbrID(int mbrID) {
         this.mbrID = mbrID;
@@ -126,6 +132,7 @@ class Member {
     public String toString() {
         return "Member{" +
                 "ID=" + mbrID +
+                ", Icon=" + mbrIconIdx +
                 ", Alias='" + mbrAlias + '\'' +
                 ", Phone='" + mbrPhone + '\'' +
                 ", Email='" + mbrEmail + '\'' +

@@ -3,8 +3,11 @@ package com.homer.linefake;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.Collections;
 
 //AsyncTask<Params, Progress, Result>
 // Params: type for doInBackground
@@ -79,6 +82,20 @@ class QueryFriendCheckEnd extends CheckEnd{
     @Override
     protected boolean checkEnd(String... strings) {
         if(FireDbHelper.queryFriendTotalCount == 0){
+            EventBus.getDefault().post(new EbusEvent(strings[0]));
+            return true;
+        }
+        return super.checkEnd(strings);
+    }
+}
+
+class GenerateChannelCheckEnd extends CheckEnd{
+    public GenerateChannelCheckEnd(Context context) {
+        super(context);
+    }
+    @Override
+    protected boolean checkEnd(String... strings) {
+        if((FireDbHelper.genChannelCnt1==0)&&(FireDbHelper.genChannelCnt2==0)){
             EventBus.getDefault().post(new EbusEvent(strings[0]));
             return true;
         }

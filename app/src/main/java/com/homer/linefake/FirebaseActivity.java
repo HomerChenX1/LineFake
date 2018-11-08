@@ -9,6 +9,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.Collections;
+
 /*
 * http://givemepass.blogspot.com/2015/06/eventbus.html?m=1
 * https://www.itread01.com/articles/1487024375.html
@@ -53,12 +55,20 @@ public class FirebaseActivity extends AppCompatActivity {
             // fireDbHelper.chatMsgTable.deleteChat(testChatMsg.getChatId());
             // Log.d("HomerfbDeleteChat", "idcmd=" + testChatMsg.getChatId());
             // fireDbHelper.chatMsgTable.deleteChatMsgByMbrId(1);
+            // fireDbHelper.chatMsgTable.deleteChatMsgByMbrId(1,2);
+            fireDbHelper.chatMsgTable.generateChannel(1,2);
+            new GenerateChannelCheckEnd(this).execute("generateChannel");
         }
 
-        fireDbHelper.chatMsgTable.deleteChatMsgByMbrId(1,2);
-        //fireDbHelper.chatMsgTable.generateChannel(1,2);
-        // new QueryFriendCheckEnd(this).execute("queryFriend");
-        // new QueryFriendCheckEnd(this).execute("queryFriend");
+        fireDbHelper.memberTable.addMember(new Member(1,"admin","0111111",
+                "admin@null.com","111111"));
+        fireDbHelper.memberTable.addMember(new Member(2,"owner","0222222",
+                "owner@null.com","222222"));
+        fireDbHelper.memberTable.addMember(new Member(3,"master","0333333",
+                "master@null.com","333333"));
+
+        fireDbHelper.memberTable.addMember(new Member(4,"guest","0444444",
+                "guest@null.com","444444"));
 
     }
 
@@ -107,9 +117,14 @@ public class FirebaseActivity extends AppCompatActivity {
                 // set counter back
                 FireDbHelper.queryFriendTotalCount = 100;
                 break;
+            case "generateChannel":
+                fireDbHelper.genChannelList1.addAll(fireDbHelper.genChannelList2);
+                Collections.sort(fireDbHelper.genChannelList1);
+                Log.d("HomerfbGenChannel", fireDbHelper.genChannelList1.get(0).toString());
+                Log.d("HomerfbGenChannel", fireDbHelper.genChannelList1.get(1).toString());
+                break;
             default:
                 break;
         }
-
     }
 }

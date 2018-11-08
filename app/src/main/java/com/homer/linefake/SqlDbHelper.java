@@ -294,7 +294,7 @@ public class SqlDbHelper extends SQLiteOpenHelper {
     }
 
 
-        public SqlDbHelper(Context context) {
+    public SqlDbHelper(Context context) {
         //Context context, String name, SQLiteDatabase.CursorFactory factory, int version
         super(context, DB_NAME, null, DB_VERSION);
     }
