@@ -5,6 +5,7 @@ package com.homer.linefake;
 //Default hosting subdomain — your-project-id.firebaseapp.com
 
 import android.support.annotation.NonNull;
+import android.util.AndroidRuntimeException;
 import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
@@ -36,6 +37,11 @@ class FireDbHelper {
     ArrayList<ChatMsg> genChannelList1 = new ArrayList<>();
     static int genChannelCnt2 = 100;
     ArrayList<ChatMsg> genChannelList2 = new ArrayList<>();
+
+    static int queryMbrByIdCnt = 100;
+    ArrayList<Member> queryMbrByIdList = new ArrayList<>();
+    static int queryMbrByEmailCnt = 100;
+    ArrayList<Member> queryMbrByEmailList = new ArrayList<>();
 
     /* ********************************************************** */
     class FriendTable {
@@ -357,12 +363,84 @@ class FireDbHelper {
             x.setMbrIconIdx();
             DatabaseReference myRef = db.getReference(TABLE_NAME + "/" + String.valueOf(key));
             myRef.setValue(x);
-            Log.d("HomerfbAddMember", x.toString());
+            // Log.d("HomerfbAddMember", x.toString());
         }
-        void updateMember(Member x){}
-        void deleteMember(int memberId){}
-        Member queryMemberById(int memberId){ return null; }
-        ArrayList<Member> queryMemberByEmail(String partEmail,boolean exact){ return null; }
+        void updateMember(Member x){
+            DatabaseReference myRef = db.getReference(TABLE_NAME + "/" + String.valueOf(x.getMbrID()));
+            myRef.setValue(x);
+            // Log.d("HomerfbUpdateMember", x.toString());
+        }
+        void deleteMember(int memberId){
+            DatabaseReference myRef = db.getReference(TABLE_NAME + "/" + String.valueOf(memberId));
+            myRef.setValue(null);
+            // Log.d("HomerfbDeleteMember", "mBrId:"+memberId);
+        }
+
+        Member queryMemberById(int memberId){
+            queryMbrByIdCnt = 100;
+            queryMbrByIdList.clear();
+            DatabaseReference myRef = db.getReference(TABLE_NAME);
+            myRef.orderByChild("mbrID").equalTo(memberId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    queryMbrByIdCnt = (int) dataSnapshot.getChildrenCount();
+                    // Log.d("HomerfbQueryMbrById", "total cnt:" + queryMbrByIdCnt );
+                    for (DataSnapshot ds: dataSnapshot.getChildren()) {
+                        --queryMbrByIdCnt;
+                        queryMbrByIdList.add(ds.getValue(Member.class));
+                        // Log.d("HomerfbQueryMbrById",queryMbrByIdList.get(0).toString());
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d("HomerfbQueryMbrById", "onCancelled", databaseError.toException());
+                }
+            });
+            // TODO: need to wait the real value
+            return null;
+        }
+        ArrayList<Member> queryMemberByEmail(final String partEmail, final boolean exact){
+            // firebase do not have contains function, so read all
+            queryMbrByEmailCnt = 100;
+            queryMbrByEmailList.clear();
+            DatabaseReference myRef = db.getReference(TABLE_NAME);
+            myRef.orderByChild("mbrEmail").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    queryMbrByEmailCnt = (int) dataSnapshot.getChildrenCount();
+                    // Log.d("HomerfbQueryMbrByEmail", "total cnt:" + queryMbrByEmailCnt );
+                    for (DataSnapshot ds: dataSnapshot.getChildren()) {
+                        boolean isAdded = false;
+                        --queryMbrByEmailCnt;
+                        // Log.d("HomerfbQueryMbrByEmail","key:"+ds.getKey()+":"+queryMbrByEmailCnt);
+                        if(ds.getKey().equals("nCOLS")) continue;
+                        try {
+                            Member temp = ds.getValue(Member.class);
+                            if(exact){
+                                if(temp.getMbrEmail().equals(partEmail)) isAdded = true;
+                            }
+                            else{
+                                if(temp.getMbrEmail().contains(partEmail)) isAdded = true;
+                            }
+                            if(isAdded){
+                                queryMbrByEmailList.add(temp);
+                                // Log.d("HomerfbQueryMbrByEmail",temp.toString());
+                            }
+                        } catch (AndroidRuntimeException e){
+                            continue;
+                        }
+                    }
+                    Log.d("HomerfbQueryMbrByEmail","query cnt:"+queryMbrByEmailList.size());
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d("HomerfbQueryMbrByEmail", "onCancelled", databaseError.toException());
+                }
+            });
+            //TODO : need wait
+            if(queryMbrByEmailCnt==0) return queryMbrByEmailList;
+            return null;
+        }
     }
 
     /* ********************************************************** */
