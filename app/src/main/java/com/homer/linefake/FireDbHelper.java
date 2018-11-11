@@ -4,6 +4,7 @@ package com.homer.linefake;
 // your-project-id : linefake-ad479
 //Default hosting subdomain — your-project-id.firebaseapp.com
 
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.AndroidRuntimeException;
 import android.util.Log;
@@ -15,8 +16,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 class FireDbHelper {
@@ -126,6 +130,7 @@ class FireDbHelper {
 
             // read ownerId's friend then send out
             queryFriendTotalCount = 100;
+            queryFriendList.clear();
             DatabaseReference myRef = db.getReference(TABLE_NAME);
             Query query = myRef.child(String.valueOf(ownerId));
             query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -399,6 +404,43 @@ class FireDbHelper {
             // TODO: need to wait the real value
             return null;
         }
+
+        void queryMemberByIdItem(int memberId){
+            DatabaseReference myRef = db.getReference(TABLE_NAME);
+            myRef.orderByChild("mbrID").equalTo(memberId).addListenerForSingleValueEvent(new ValueEventListener() {
+                int queryMbrByIdCnt = 50;
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    queryMbrByIdCnt = (int) dataSnapshot.getChildrenCount();
+                    // Log.d("HomerfbQueryMbrById", "total cnt:" + queryMbrByIdCnt );
+                    for (DataSnapshot ds: dataSnapshot.getChildren()) {
+                        --queryMbrByIdCnt;
+                        synchronized (queryMbrByIdList){
+                            queryMbrByIdList.add(ds.getValue(Member.class));
+                        }
+                        // Log.d("HomerfbQueryMbrById",queryMbrByIdList.get(0).toString());
+                    }
+                    if(queryMbrByIdCnt == 0) EventBus.getDefault().post(new EbusEvent("genFriendList"));
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d("HomerfbQueryMbrById", "onCancelled", databaseError.toException());
+                }
+            });
+            // TODO: need to wait the real value
+            return;
+        }
+
+        void genFriendList(Integer [] aList) {
+            synchronized (queryMbrByIdList) {
+                queryMbrByIdList.clear();
+            }
+            for(int id : aList){
+                // friendList.add(queryMemberById(id));
+                queryMemberByIdItem(id);
+            }
+
+        }
         ArrayList<Member> queryMemberByEmail(final String partEmail, final boolean exact){
             // firebase do not have contains function, so read all
             queryMbrByEmailCnt = 100;
@@ -438,8 +480,7 @@ class FireDbHelper {
                 }
             });
             //TODO : need wait
-            if(queryMbrByEmailCnt==0) return queryMbrByEmailList;
-            return null;
+            return queryMbrByEmailList;
         }
     }
 

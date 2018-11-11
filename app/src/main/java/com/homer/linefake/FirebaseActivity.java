@@ -22,6 +22,7 @@ public class FirebaseActivity extends AppCompatActivity {
     private FireDbHelper fireDbHelper = null;
     private EventBus eventBus;
     private boolean inDebug = false;
+    private boolean setUpEBus = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +30,10 @@ public class FirebaseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_firebase);
         vMessages = findViewById(R.id.firebase_messages);
         // setup EventBus
-        EventBus.builder().addIndex(new MyEventBusIndex()).installDefaultEventBus();
+        if(setUpEBus){
+            EventBus.builder().addIndex(new MyEventBusIndex()).installDefaultEventBus();
+            setUpEBus = false;
+        }
         eventBus = EventBus.getDefault();
         eventBus.register(this);
 

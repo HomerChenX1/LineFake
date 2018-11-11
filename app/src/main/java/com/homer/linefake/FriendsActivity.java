@@ -3,6 +3,7 @@ package com.homer.linefake;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,6 +11,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
@@ -24,10 +29,16 @@ public class FriendsActivity extends AppCompatActivity {
     private FriendAdapter findAdapter;
     private ArrayList<Member> findList = new ArrayList<>();
 
+    private EventBus eventBus;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
+
+        eventBus = EventBus.getDefault();
+        eventBus.register(this);
+
         findViews();
         vMessages.setText("Init:" + DbHelper.owner.toString());
     }
@@ -124,5 +135,22 @@ public class FriendsActivity extends AppCompatActivity {
 //        int i = DbHelper.getInstance().addFriendOfOwner(partEmail);
 //        Toast.makeText(this, String.valueOf(i) + ":" + " add by e-mail", Toast.LENGTH_SHORT).show();
 //        friendAdapter.refresh(DbHelper.friendList);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        eventBus.unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(EbusEvent event) {
+        switch (event.getEventMsg()) {
+            case "countFinish":
+                Log.d("MainActivity", "Now it happenes countFinish");
+                break;
+            default:
+                break;
+        }
     }
 }

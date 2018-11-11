@@ -3,11 +3,16 @@ package com.homer.linefake;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
@@ -24,10 +29,16 @@ public class MemberActivity extends AppCompatActivity {
     private Button vDeleteBtn;
     private int mode; // 0:register, 1:update
 
+    private EventBus eventBus;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_member);
+
+        eventBus = EventBus.getDefault();
+        eventBus.register(this);
+
         setTitle(getString(R.string.app_name) + ": Member");
         findViews();
         Intent intent = getIntent();
@@ -211,5 +222,22 @@ public class MemberActivity extends AppCompatActivity {
         // use multiple backpress
         DbHelper.multipleBack = 1;
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        eventBus.unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(EbusEvent event) {
+        switch (event.getEventMsg()) {
+            case "countFinish":
+                Log.d("MainActivity", "Now it happenes countFinish");
+                break;
+            default:
+                break;
+        }
     }
 }

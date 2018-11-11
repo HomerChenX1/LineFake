@@ -3,6 +3,7 @@ package com.homer.linefake;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -11,7 +12,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
+import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
     private ProgressBar vProgress;
@@ -24,10 +30,17 @@ public class MainActivity extends AppCompatActivity {
     private TextView vMessages;
     private String[] eMailAutoList ;
 
+    private EventBus eventBus;
+    private int genFriendListCnt = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        eventBus = EventBus.getDefault();
+        eventBus.register(this);
+
         setTitle(getString(R.string.app_name) + ": Login");
         eMailAutoList = getResources().getStringArray(R.array.email_auto_list);
         findViews();
@@ -53,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
                 DbHelper.getInstance().sqlDbHelper = new SqlDbHelper(this);
                 DbHelper.getInstance().sqlDbHelper.setDb(true);
                 DbHelper.getInstance().initDbHelper(); // running under debug
+                break;
+            case 2:
+                DbHelper.getInstance().fireDbHelper = new FireDbHelper();
+                // DbHelper.getInstance().initDbHelper(); // running under debug
                 break;
             default:
                 // use memory by ArrayList
@@ -131,9 +148,17 @@ public class MainActivity extends AppCompatActivity {
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
+            if(DbHelper.useSQL!=2) showProgress(true);
             // vMessages.setText("Password:" + email + "." + password + "\n");
             DbHelper.guest.setMbrPassword(password).setMbrEmail(email);
+            if(DbHelper.useSQL==2){
+                //DbHelper.getInstance().waitCount = 50;
+                new WaitCountCheckEnd1(this, 50).execute("countFinish");
+                DbHelper.getInstance().doEmailLoginFB(DbHelper.guest);
+                // new doEmailLoginFBCheckEnd(MainActivity.this,50).execute("doEmailLoginFB");
+                // new doEmailLoginFBCheckEnd(50).execute("doEmailLoginFB");
+                return;
+            }
             int x = DbHelper.getInstance().doEmailLogin(DbHelper.guest);
             // vMessages.setText("Password:" + email + "." + password + "\n");
             StringBuilder sb = new StringBuilder();
@@ -162,6 +187,26 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(this, InfoActivity.class);
                     startActivity(intent);
             }
+        }
+    }
+
+    public void onClickEmailSignIn1(int x){
+        switch(x){
+            case 1:
+                Toast.makeText(this,"E-Mail not found !",Toast.LENGTH_LONG).show();
+                vEmail.setError(getString(R.string.error_not_exist_email));
+                vMessages.setText("");
+                vEmail.requestFocus();
+                break;
+            case 2:
+                Toast.makeText(this,"wrong PWD !",Toast.LENGTH_LONG).show();
+                vPassword.setError(getString(R.string.error_incorrect_password));
+                vMessages.setText("");
+                vPassword.requestFocus();
+                break;
+            default:
+                Intent intent = new Intent(this, InfoActivity.class);
+                startActivity(intent);
         }
     }
 
@@ -197,10 +242,44 @@ public class MainActivity extends AppCompatActivity {
         if((DbHelper.useSQL==1) && (DbHelper.getInstance().sqlDbHelper != null)) {
             DbHelper.getInstance().sqlDbHelper.onDestroy();
         }
+        eventBus.unregister(this);
     }
 
     public void onClickFireBase(View view){
         Intent intent = new Intent(this, FirebaseActivity.class);
         startActivity(intent);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(EbusEvent event){
+        switch(event.getEventMsg()){
+            case "countFinish":
+                Log.d("MainActivity", "Now it happenes countFinish");
+                break;
+            case "doEmailLoginFB":
+                Log.d("MainActivity", "doEmailLoginFB:" + DbHelper.getInstance().fireDbHelper.queryMbrByEmailList.size());
+                int i = DbHelper.getInstance().doEmailLoginFB1(DbHelper.getInstance().fireDbHelper.queryMbrByEmailList);
+                if(i!=0) onClickEmailSignIn1(i);
+                Log.d("MainActivity", "doEmailLoginFB:" + "retv=" + i);
+                break;
+            case "doEmailLoginFB1":
+                Log.d("MainActivity", "doEmailLoginFB1:" + DbHelper.getInstance().fireDbHelper.queryFriendList.size());
+                DbHelper.getInstance().doEmailLoginFB2(DbHelper.getInstance().fireDbHelper.queryFriendList);
+                genFriendListCnt = 0;
+                break;
+            case "genFriendList":
+                genFriendListCnt++;
+                Log.d("MainActivity", "genFriendList:" + DbHelper.getInstance().fireDbHelper.queryMbrByIdList.size() +":"+genFriendListCnt);
+                if(genFriendListCnt == DbHelper.owner.getFriendSetSize()){
+                    // the last message
+                    DbHelper.getInstance().resetWaitCount();
+                    Log.d("MainActivity", "genFriendList tot:" + DbHelper.getInstance().fireDbHelper.queryMbrByIdList.size());
+                    DbHelper.friendList.addAll(DbHelper.getInstance().fireDbHelper.queryMbrByIdList);
+                    onClickEmailSignIn1(0);
+                }
+                break;
+            default:
+                break;
+        }
     }
 }

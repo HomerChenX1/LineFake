@@ -6,11 +6,16 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
@@ -30,11 +35,17 @@ public class ChannelActivity extends AppCompatActivity {
     private ChnAdapter chnAdapter;
     ArrayList<ChatMsg> channel;
 
+    private EventBus eventBus;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel);
+
+        eventBus = EventBus.getDefault();
+        eventBus.register(this);
+
         findViews();
         vMessages.setText("Init:" + DbHelper.owner.toString() + "\n" + DbHelper.master.toString());
         vMasterIcon.setImageResource(DbHelper.master.getMbrIconIdx());
@@ -101,4 +112,20 @@ public class ChannelActivity extends AppCompatActivity {
         vChannel.scrollToPosition(channel.size()-1);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        eventBus.unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(EbusEvent event) {
+        switch (event.getEventMsg()) {
+            case "countFinish":
+                Log.d("MainActivity", "Now it happenes countFinish");
+                break;
+            default:
+                break;
+        }
+    }
 }
