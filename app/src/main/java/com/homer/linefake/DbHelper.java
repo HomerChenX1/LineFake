@@ -4,7 +4,11 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-
+/*
+DbHelper.getInstance().queryMemberByEmailExact(email)  need wait
+DbHelper.getInstance().registerMember(DbHelper.owner); need id
+DbHelper.getInstance().deleteOwner(); need wait
+*/
 class DbHelper {
     static MemberWithFriend owner = new MemberWithFriend();
     static ArrayList<Member> friendList = new ArrayList<>(); // gather info from friendSet

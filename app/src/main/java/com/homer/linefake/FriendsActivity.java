@@ -17,7 +17,12 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-
+/*
+DbHelper.getInstance().deleteFriendOfOwner
+DbHelper.getInstance().deleteChatMsgByMbrId
+DbHelper.getInstance().addFriendOfOwner
+DbHelper.getInstance().queryMemberByEmail(partEmail);
+*/
 public class FriendsActivity extends AppCompatActivity {
     private TextView vMessages;
     private ListView vFriendSet;

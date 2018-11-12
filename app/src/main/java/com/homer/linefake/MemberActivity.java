@@ -17,7 +17,11 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 
 import static com.homer.linefake.DbHelper.owner;
-
+/*
+DbHelper.getInstance().queryMemberByEmailExact(email)
+DbHelper.getInstance().registerMember(DbHelper.owner);
+DbHelper.getInstance().deleteOwner();
+*/
 public class MemberActivity extends AppCompatActivity {
     private TextView vMessages;
     private TextView vId;

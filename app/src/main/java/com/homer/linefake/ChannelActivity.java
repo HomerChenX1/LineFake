@@ -18,7 +18,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
-
+/*
+DbHelper.getInstance().generateChannel(DbHelper.master.getMbrID()
+* */
 // will use RecyclerView
 public class ChannelActivity extends AppCompatActivity {
     private TextView vMessages;

@@ -13,7 +13,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
-
+/*
+DbHelper.getInstance().deleteChat
+addChatMsgToChn(ChatMsg cm) ???
+*/
 public class ChnAdapter extends RecyclerView.Adapter<ChnAdapter.ViewHolder>
 {
     private List<ChatMsg> mDataSet;
