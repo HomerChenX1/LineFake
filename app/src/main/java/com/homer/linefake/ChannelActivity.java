@@ -13,13 +13,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.ValueEventListener;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Collections;
+
 /*
 DbHelper.getInstance().generateChannel(DbHelper.master.getMbrID()
+void watchChat(boolean owner){
 * */
 // will use RecyclerView
 public class ChannelActivity extends AppCompatActivity {
@@ -55,6 +60,7 @@ public class ChannelActivity extends AppCompatActivity {
         vOwnerAlias.setText(DbHelper.owner.getMbrAlias());
         vOwnerIcon.setImageResource(DbHelper.owner.getMbrIconIdx());
         channel = DbHelper.getInstance().generateChannel(DbHelper.master.getMbrID(), DbHelper.owner.getMbrID());
+        new GenerateChannelCheckEnd(this).execute("generateChannel");
         vMessages.setText("channel length:" + channel.size());
 
 
@@ -117,7 +123,13 @@ public class ChannelActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // TODO : remove watch 2 listeners
+        //ValueEventListener listener = new ValueEventListener();
+        //ref.addValueEventListener(listener);
+        //ref.removeEventListener(listener);
+        
         eventBus.unregister(this);
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -125,6 +137,18 @@ public class ChannelActivity extends AppCompatActivity {
         switch (event.getEventMsg()) {
             case "countFinish":
                 Log.d("MainActivity", "Now it happenes countFinish");
+                break;
+            case "generateChannel":
+                DbHelper.getInstance().fireDbHelper.genChannelList1.addAll(DbHelper.getInstance().fireDbHelper.genChannelList2);
+                Collections.sort(DbHelper.getInstance().fireDbHelper.genChannelList1);
+                chnAdapter.notifyDataSetChanged();
+                //Log.d("HomerfbGenChannel", DbHelper.getInstance().fireDbHelper.genChannelList1.get(0).toString());
+                //Log.d("HomerfbGenChannel", DbHelper.getInstance().fireDbHelper.genChannelList1.get(1).toString());
+                //Log.d("HomerfbGenChannel", DbHelper.getInstance().fireDbHelper.genChannelList1.get(2).toString());
+                //Log.d("HomerfbGenChannel", DbHelper.getInstance().fireDbHelper.genChannelList1.get(3).toString());
+
+                Log.d("HomerfbWatchChat", "watch start!");
+                DbHelper.getInstance().fireDbHelper.chatMsgTable.watchChat(false);
                 break;
             default:
                 break;

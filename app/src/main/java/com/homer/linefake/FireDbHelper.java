@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.util.AndroidRuntimeException;
 import android.util.Log;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -183,35 +184,22 @@ class FireDbHelper {
             delChatMsgMbrIdListCnt1 = 100;
             // search x.getMbrIdFrom()==mbrId or
             DatabaseReference myRef = db.getReference(TABLE_NAME);
-            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            myRef.orderByChild("chatId").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     delChatMsgMbrIdListCnt1 = (int) dataSnapshot.getChildrenCount();
                     // Log.d("HomerfbDelChatMsgMbrId", "total cnt:" + delChatMsgMbrIdListCnt1);
                     for (DataSnapshot ds: dataSnapshot.getChildren()) {
                         delChatMsgMbrIdListCnt1--;
-                        // have key = ds.getKey()
-                        // Now only item by item read,
-                        // Integer temp = ds.child("chatId").getValue(Integer.class);
-                        // ChatMsg temp = ds.getValue(ChatMsg.class); do not know why fail
-                        ChatMsg temp = new ChatMsg();
-                        Integer temp2 = ds.child("chatId").getValue(Integer.class);
-                        if(temp2 != null) {
-                            // IgnoreExtraProperties no effect, the timeStart to be saved as timeStartLong
-                            // and make ds.getValue(ChatMsg.class) fail
-                            temp.setChatId(ds.child("chatId").getValue(Integer.class));
-                            temp.setTimeStart(ds.child("timeStartLong").getValue(Long.class));
-                            temp.setMbrIdFrom(ds.child("mbrIdFrom").getValue(Integer.class));
-                            temp.setMbrIdTo(ds.child("mbrIdTo").getValue(Integer.class));
-                            temp.setChatType(ds.child("chatType").getValue(Integer.class));
-                            temp.setTxtMsg(ds.child("txtMsg").getValue(String.class));
-                            // Log.d("HomerfbDelChatMsgMbrId", temp.toString());
-                        }
+                        int pKey = ds.child("mbrIdTo").getValue(Integer.class);
+                        if(pKey==mbrId) ds.getRef().removeValue();
+                        pKey = ds.child("mbrIdFrom").getValue(Integer.class);
+                        if(pKey==mbrId) ds.getRef().removeValue();
                     }
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.d("HomerfbQueryFriend", "onCancelled", databaseError.toException());
+                    Log.d("deleteChatMsgByMbrId1", "onCancelled", databaseError.toException());
                 }
             });
         }
@@ -355,6 +343,47 @@ class FireDbHelper {
             }
             return genChannelList1;
         }
+
+        void watchChat(boolean owner){
+            // ower need to watch mbrIdTo == ownerId
+            // master need to watch mbrIdTo == masterId
+            Query wQuery;
+            DatabaseReference myRef = db.getReference(TABLE_NAME);
+            if(owner) {
+                wQuery = myRef.orderByChild("mbrIdTo").equalTo(DbHelper.owner.getMbrID());
+            } else {
+                wQuery = myRef.orderByChild("mbrIdTo").equalTo(DbHelper.master.getMbrID());
+            }
+            wQuery.addChildEventListener(new ChildEventListener() {
+                int count = 0;
+
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+                    Log.d("HomerfbWatchChat", "onChildAdded:" + count++ + ":" + dataSnapshot.getKey());
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
+                    Log.d("HomerfbWatchChat", "onChildChanged:" + count++ + ":" + dataSnapshot.getKey());
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    Log.d("HomerfbWatchChat", "onChildRemoved:" + count++);
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {
+                    Log.d("HomerfbWatchChat", "onChildMoved:" + count++);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.d("HomerfbWatchChat", "onCancelled", databaseError.toException());
+                }
+            });
+
+        }
     }
     /* ********************************************************** */
     class MemberTable extends FriendTable {
@@ -371,9 +400,13 @@ class FireDbHelper {
             // Log.d("HomerfbAddMember", x.toString());
         }
         void updateMember(Member x){
+            Log.d("HomerfbUpdateMember", x.toString());
             DatabaseReference myRef = db.getReference(TABLE_NAME + "/" + String.valueOf(x.getMbrID()));
-            myRef.setValue(x);
-            // Log.d("HomerfbUpdateMember", x.toString());
+            // can not use myRef.setValue(x), system said x serialized fail???
+            myRef.child("mbrAlias").setValue(x.getMbrAlias());
+            myRef.child("mbrPhone").setValue(x.getMbrPhone());
+            myRef.child("mbrEmail").setValue(x.getMbrEmail());
+            myRef.child("mbrPassword").setValue(x.getMbrPassword());
         }
         void deleteMember(int memberId){
             DatabaseReference myRef = db.getReference(TABLE_NAME + "/" + String.valueOf(memberId));
@@ -394,6 +427,9 @@ class FireDbHelper {
                         --queryMbrByIdCnt;
                         queryMbrByIdList.add(ds.getValue(Member.class));
                         // Log.d("HomerfbQueryMbrById",queryMbrByIdList.get(0).toString());
+                    }
+                    if(queryMbrByIdCnt == 0){
+                        EventBus.getDefault().post(new EbusEvent("HomerfbQueryMbrById"));
                     }
                 }
                 @Override

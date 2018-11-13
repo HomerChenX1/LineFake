@@ -18,10 +18,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 /*
-DbHelper.getInstance().deleteFriendOfOwner
-DbHelper.getInstance().deleteChatMsgByMbrId
-DbHelper.getInstance().addFriendOfOwner
-DbHelper.getInstance().queryMemberByEmail(partEmail);
+Firebase complete
 */
 public class FriendsActivity extends AppCompatActivity {
     private TextView vMessages;
@@ -35,6 +32,7 @@ public class FriendsActivity extends AppCompatActivity {
     private ArrayList<Member> findList = new ArrayList<>();
 
     private EventBus eventBus;
+    private int QueryMbrByIdType = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,9 +105,12 @@ public class FriendsActivity extends AppCompatActivity {
                 // Toast.makeText(this, "Add find result", Toast.LENGTH_SHORT).show();
                 Member memberSelect = (Member) vFindSet.getItemAtPosition(menuInfo.position);
                 // Toast.makeText(this, memberSelect.getMbrAlias()+ ":" + " Add", Toast.LENGTH_SHORT).show();
+                QueryMbrByIdType = 1;
                 int i = DbHelper.getInstance().addFriendOfOwner(memberSelect.getMbrID());
-                Toast.makeText(this, String.valueOf(i) + ":" + " add by ID", Toast.LENGTH_SHORT).show();
-                friendAdapter.refresh(DbHelper.friendList);
+                if(DbHelper.useSQL!=2) {
+                    Toast.makeText(this, String.valueOf(i) + ":" + " add by ID", Toast.LENGTH_SHORT).show();
+                    friendAdapter.refresh(DbHelper.friendList);
+                }
                 break;
             case 3:
                 Toast.makeText(this, "Only act in administrator mode", Toast.LENGTH_SHORT).show();
@@ -124,15 +125,20 @@ public class FriendsActivity extends AppCompatActivity {
         String temp = vMsgId.getText().toString().trim();
         if(TextUtils.isEmpty(temp)){ return; }
         int id = Integer.parseInt(temp);
+        QueryMbrByIdType = 2;
         int i = DbHelper.getInstance().addFriendOfOwner(id);
-        Toast.makeText(this, String.valueOf(i) + ":" + " add by ID", Toast.LENGTH_SHORT).show();
-        friendAdapter.refresh(DbHelper.friendList);
+        if(DbHelper.useSQL!=2) {
+            Toast.makeText(this, String.valueOf(i) + ":" + " add by ID", Toast.LENGTH_SHORT).show();
+            friendAdapter.refresh(DbHelper.friendList);
+        }
     }
     public void onClickFindByEmail(View view){
         // Toast.makeText(this, "onClickFindByEmail", Toast.LENGTH_SHORT).show();
         String partEmail = vMsgEmail.getText().toString().trim();
         if(TextUtils.isEmpty(partEmail)){ return; }
+        new doEmailLoginFBCheckEnd(50).execute("queryMemberByEmail");
         ArrayList<Member> mList = DbHelper.getInstance().queryMemberByEmail(partEmail);
+        if(DbHelper.useSQL == 2) return;
         if(mList.size() > 0) {
             findList = mList;
             findAdapter.refresh(findList);
@@ -153,6 +159,24 @@ public class FriendsActivity extends AppCompatActivity {
         switch (event.getEventMsg()) {
             case "countFinish":
                 Log.d("MainActivity", "Now it happenes countFinish");
+                break;
+            case "HomerfbQueryMbrById":
+                Member m = new Member();
+                m.setMbrID(-1);
+                if(DbHelper.getInstance().fireDbHelper.queryMbrByIdList.size()==1){
+                    // correct
+                    DbHelper.getInstance().fireDbHelper.queryMbrByIdList.get(0).copyTo(m);
+                }
+                int i =DbHelper.getInstance().addFriendOfOwner2(m);
+                Toast.makeText(this, String.valueOf(i) + ":" + " add by ID", Toast.LENGTH_SHORT).show();
+                friendAdapter.refresh(DbHelper.friendList);
+                QueryMbrByIdType = 0;
+                break;
+            case "queryMemberByEmail":
+                if(DbHelper.getInstance().fireDbHelper.queryMbrByEmailList.size() > 0) {
+                    findList = DbHelper.getInstance().fireDbHelper.queryMbrByEmailList;
+                    findAdapter.refresh(findList);
+                }
                 break;
             default:
                 break;

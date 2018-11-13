@@ -18,8 +18,6 @@ import java.util.ArrayList;
 
 import static com.homer.linefake.DbHelper.owner;
 /*
-DbHelper.getInstance().queryMemberByEmailExact(email)
-DbHelper.getInstance().registerMember(DbHelper.owner);
 DbHelper.getInstance().deleteOwner();
 */
 public class MemberActivity extends AppCompatActivity {
@@ -72,129 +70,122 @@ public class MemberActivity extends AppCompatActivity {
         vRegisterBtn = findViewById(R.id.mbr_register_btn);
         vDeleteBtn = findViewById(R.id.mbr_delete_btn);
     }
-    // mbr_register_btn
-    public void onClickMbrRegister(View view){
-        View vFocus = null;
-        boolean cancel = false;
-        int temp;
 
+    String chkEntries(){
+        int temp;
         // vAlias
         vAlias.setError(null);
         String alias = vAlias.getText().toString().trim();
         // Check for a valid password, if the user entered one.
         temp = Member.isAliasValid(alias);
-        if(temp!=0){
-            // vPassword.setError(getString(R.string.error_invalid_password));
-            vFocus = vAlias;
-            cancel = true;
-        } else DbHelper.owner.setMbrAlias(alias);
-        switch (temp){
+        switch(temp){
+            case 0:
+                DbHelper.owner.setMbrAlias(alias);
+                break;
             case 1:
                 vAlias.setError(getString(R.string.error_field_required));
-                break;
+                return "vAlias";
             case 2:
                 vAlias.setError(getString(R.string.error_invalid_field));
+                return "vAlias";
         }
 
         // vPhone
         vPhone.setError(null);
         String phone = vPhone.getText().toString().trim();
         // Check for a valid password, if the user entered one.
-        if(temp==0) {
-            temp = Member.isPhoneValid(phone);
-            if (temp != 0) {
-                // vPassword.setError(getString(R.string.error_invalid_password));
-                vFocus = vPhone;
-                cancel = true;
-            } else DbHelper.owner.setMbrPhone(phone);
-            switch (temp) {
-                case 1:
-                    vPhone.setError(getString(R.string.error_field_required));
-                    break;
-                case 2:
-                    vPhone.setError(getString(R.string.error_invalid_field));
-            }
-        }
-
-        // for email processing
-        vEmail.setError(null);
-        String email = vEmail.getText().toString().trim();
-        // Check for a valid email address.
-        if(temp==0) {
-            temp = Member.isEmailValid(email);
-            if (temp != 0) {
-                vFocus = vEmail;
-                cancel = true;
-            }
-            else {
-                // make sure e-mail unique
-                if(DbHelper.getInstance().queryMemberByEmailExact(email).size() != 0){
-                    temp = 3;
-                    vFocus = vEmail;
-                    cancel = true;
-                }
-                else DbHelper.owner.setMbrEmail(email);
-            }
-            switch (temp) {
-                case 1:
-                    vEmail.setError(getString(R.string.error_field_required));
-                    break;
-                case 2:
-                    vEmail.setError(getString(R.string.error_invalid_email));
-                    break;
-                case 3:
-                    vEmail.setError(getString(R.string.error_duplicate_email));
-            }
+        temp = Member.isPhoneValid(phone);
+        switch(temp){
+            case 0:
+                DbHelper.owner.setMbrPhone(phone);
+                break;
+            case 1:
+                vPhone.setError(getString(R.string.error_field_required));
+                return "vPhone";
+            case 2:
+                vPhone.setError(getString(R.string.error_invalid_field));
+                return "vPhone";
         }
 
         // for password processing
         vPassword.setError(null);
         String password = vPassword.getText().toString().trim();
         // Check for a valid password, if the user entered one.
-        if(temp==0) {
-            temp = Member.isPasswordValid(password);
-            if (temp != 0) {
-                // vPassword.setError(getString(R.string.error_invalid_password));
-                vFocus = vPassword;
-                cancel = true;
-            } else DbHelper.owner.setMbrPassword(password);
-            switch (temp) {
-                case 1:
-                    vPassword.setError(getString(R.string.error_field_required));
-                    break;
-                case 2:
-                    vPassword.setError(getString(R.string.error_invalid_password));
-            }
+        temp = Member.isPasswordValid(password);
+        switch (temp) {
+            case 0:
+                DbHelper.owner.setMbrPassword(password);
+                break;
+            case 1:
+                vPassword.setError(getString(R.string.error_field_required));
+                return "vPassword";
+            case 2:
+                vPassword.setError(getString(R.string.error_invalid_password));
+                return "vPassword";
         }
 
+        // for email processing
+        vEmail.setError(null);
+        String email = vEmail.getText().toString().trim();
+        temp = Member.isEmailValid(email);
+        switch(temp) {
+            case 0:
+                DbHelper.owner.setMbrEmail(email);
+                break;
+            case 1:
+                vEmail.setError(getString(R.string.error_field_required));
+                return "vEmail";
+            case 2:
+                vEmail.setError(getString(R.string.error_invalid_email));
+                return "vEmail";
+            case 3:
+                vEmail.setError(getString(R.string.error_duplicate_email));
+                return "vEmail";
+            default:
+                // TODO check again
+                DbHelper.getInstance().queryMemberByEmailExact(email);
+        }
+        return "done";
+    }
+    // mbr_register_btn
+    public void onClickMbrRegister(View view){
+        View vFocus = null;
+        boolean cancel = true;
+
+        String mString = chkEntries();
+        Log.d("MemberActivity","mString:"+mString);
+        switch(mString){
+            case "vAlias":
+                vFocus = vAlias;
+                break;
+            case "vPhone":
+                vFocus = vPhone;
+                break;
+            case "vPassword":
+                vFocus = vPassword;
+                break;
+            case "vEmail":
+                vFocus = vEmail;
+                break;
+            case "done":
+                cancel = false;
+                break;
+        }
         if (cancel) {
             // There was an error; don't attempt register/update and focus the first
             // form field with an error.
             vFocus.requestFocus();
-        } else {
-            // perform the user register/update attempt.
-            // vMessages.setText("start line 144");
-            StringBuilder sb = new StringBuilder();
-            sb.append("ID:").append(DbHelper.owner.getMbrID()).append(" ICON:").append(DbHelper.owner.getMbrIconIdx())
-                    .append(" Alias:").append(DbHelper.owner.getMbrAlias()).append(" Phone:").append(DbHelper.owner.getMbrPhone())
-                    .append(" EMail:").append(DbHelper.owner.getMbrEmail()).append(" Pwd:").append(DbHelper.owner.getMbrPassword())
-                    .append(" Owner friends:").append(DbHelper.owner.getFriendSet().length);
-            vMessages.setText(sb.toString());
-            if(mode == 0){
-                // mode == 0 register, add owner to memberTable,  friendTable with admin, delete owner.ID = 0 , to login
-                //use intent will generate backpress error
-                //jump to the bottom activity will induced backpress error
-                //Toast.makeText(view.getContext(), String.valueOf(DbHelper.getInstance().generateMbrID()), Toast.LENGTH_LONG).show();
-                DbHelper.getInstance().registerMember(DbHelper.owner);
-                // DbHelper.owner.setMbrID(0); do not add this for multiple update
-            }
-            else{
-                // mode == 1 update, up owner to memberTable
-                DbHelper.getInstance().updateMember(DbHelper.owner);
-            }
-            finish();
+            return;
         }
-
+        Log.d("Homerfb", DbHelper.owner.toString());
+        if(mode == 1){
+            // mode == 1 update, up owner to memberTable
+            DbHelper.getInstance().updateMember(DbHelper.owner);
+            finish();
+        }else{
+            ArrayList<Member> temp = DbHelper.getInstance().queryMemberByEmailExact(DbHelper.owner.getMbrEmail());
+            new doEmailLoginFBCheckEnd(50).execute("doEmailLoginFB");
+        }
     }
     // mbr_cancel_btn
     public void onClickMbrCancel(View view){
@@ -238,7 +229,25 @@ public class MemberActivity extends AppCompatActivity {
     public void onEventMainThread(EbusEvent event) {
         switch (event.getEventMsg()) {
             case "countFinish":
-                Log.d("MainActivity", "Now it happenes countFinish");
+                Log.d("MemberActivity", "Now it happenes countFinish");
+                break;
+            case "doEmailLoginFB":
+                // now in register mode
+                int temp = DbHelper.getInstance().fireDbHelper.queryMbrByEmailList.size();
+                Log.d("MemberActivity", "doEmailLoginFB:" + temp);
+                if(temp!=0){
+                    vEmail.setError(getString(R.string.error_duplicate_email));
+                    vEmail.requestFocus();
+                    // why finish
+                } else{
+                    // mode == 0 register, add owner to memberTable,  friendTable with admin, delete owner.ID = 0 , to login
+                    //use intent will generate backpress error
+                    //jump to the bottom activity will induced backpress error
+                    //Toast.makeText(view.getContext(), String.valueOf(DbHelper.getInstance().generateMbrID()), Toast.LENGTH_LONG).show();
+                    DbHelper.getInstance().registerMember(DbHelper.owner);
+                    // DbHelper.owner.setMbrID(0); do not add this for multiple update
+                }
+                finish();
                 break;
             default:
                 break;

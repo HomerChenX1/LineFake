@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/* Firebase finish */
 class FriendAdapter extends BaseAdapter {
     private Context context;
     private List<Member> memberList;

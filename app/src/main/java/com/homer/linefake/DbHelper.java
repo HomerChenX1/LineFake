@@ -160,7 +160,7 @@ class DbHelper {
             return sqlDbHelper.friendTable.deleteFriend(ownerId, masterId);
         }
         if(useSQL==2){
-            return sqlDbHelper.friendTable.deleteFriend(ownerId, masterId);
+            return fireDbHelper.friendTable.deleteFriend(ownerId, masterId);
         }
         ArrayList<Integer [] > items = new ArrayList<>();
         for(Integer [] x : friendTable) {
@@ -292,12 +292,13 @@ class DbHelper {
 
         // add chatMsgTable : addChat
         addChat(new ChatMsg(idList.get(1),idList.get(2), ChatMsg.chatTypeText, "This is test12!"));
-        addChat(new ChatMsg(idList.get(2),idList.get(1), ChatMsg.chatTypeText, "OK21!"));
         addChat(new ChatMsg(idList.get(1),idList.get(3), ChatMsg.chatTypeText, "This is test13!"));
-        addChat(new ChatMsg(idList.get(3),idList.get(1), ChatMsg.chatTypeText, "OK31!"));
         addChat(new ChatMsg(idList.get(1),idList.get(4), ChatMsg.chatTypeText, "This is test14!"));
-        addChat(new ChatMsg(idList.get(4),idList.get(1), ChatMsg.chatTypeText, "OK41!"));
         addChat(new ChatMsg(idList.get(2),idList.get(3), ChatMsg.chatTypeText, "This is test23!"));
+
+        addChat(new ChatMsg(idList.get(2),idList.get(1), ChatMsg.chatTypeText, "OK21!"));
+        addChat(new ChatMsg(idList.get(3),idList.get(1), ChatMsg.chatTypeText, "OK31!"));
+        addChat(new ChatMsg(idList.get(4),idList.get(1), ChatMsg.chatTypeText, "OK41!"));
         addChat(new ChatMsg(idList.get(3),idList.get(2), ChatMsg.chatTypeText, "OK32!"));
     }
 
@@ -442,19 +443,26 @@ class DbHelper {
         }
         return i;
     }
+
     int addFriendOfOwner(int memberId) {
         // id exist?
         Member m = queryMemberById(memberId);
-        if(m.getMbrID() == memberId) {
+        if(useSQL == 2){
+            return 0;
+        }
+        return addFriendOfOwner2(m);
+    }
+    int addFriendOfOwner2(Member m) {
+        if(m.getMbrID() != -1) {
             // exist,
             // if exist in friendSet?
             int i = owner.getFriendSetSize();
             // owner.friendSet -> friendList ->  friendTable
-            owner.setFriendSet(memberId);
+            owner.setFriendSet(m.getMbrID());
             if((owner.getFriendSetSize() -i) > 0){
                 // not exist in friendSet and add successful
                 friendList.add(m);
-                addFriend(owner.getMbrID(), memberId);
+                addFriend(owner.getMbrID(), m.getMbrID());
                 return friendList.size();
             }
         }

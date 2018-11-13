@@ -18,7 +18,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.Collections;
-
+/* Firebase finish */
 public class MainActivity extends AppCompatActivity {
     private ProgressBar vProgress;
     // private TextInputLayout vEmailLayout; not necessary
@@ -65,11 +65,9 @@ public class MainActivity extends AppCompatActivity {
                 // if database file not exist, run here
                 DbHelper.getInstance().sqlDbHelper = new SqlDbHelper(this);
                 DbHelper.getInstance().sqlDbHelper.setDb(true);
-                DbHelper.getInstance().initDbHelper(); // running under debug
                 break;
             case 2:
                 DbHelper.getInstance().fireDbHelper = new FireDbHelper();
-                // DbHelper.getInstance().initDbHelper(); // running under debug
                 break;
             default:
                 // use memory by ArrayList
@@ -170,13 +168,13 @@ public class MainActivity extends AppCompatActivity {
             showProgress(false);
             switch(x){
                 case 1:
-                    Toast.makeText(this,"E-Mail not found !",Toast.LENGTH_LONG).show();
+                    // Toast.makeText(this,"E-Mail not found !",Toast.LENGTH_LONG).show();
                     vEmail.setError(getString(R.string.error_not_exist_email));
                     vMessages.setText("");
                     vEmail.requestFocus();
                     break;
                 case 2:
-                    Toast.makeText(this,"wrong PWD !",Toast.LENGTH_LONG).show();
+                    // Toast.makeText(this,"wrong PWD !",Toast.LENGTH_LONG).show();
                     vPassword.setError(getString(R.string.error_incorrect_password));
                     vMessages.setText("");
                     vPassword.requestFocus();
@@ -193,13 +191,13 @@ public class MainActivity extends AppCompatActivity {
     public void onClickEmailSignIn1(int x){
         switch(x){
             case 1:
-                Toast.makeText(this,"E-Mail not found !",Toast.LENGTH_LONG).show();
+                // Toast.makeText(this,"E-Mail not found !",Toast.LENGTH_LONG).show();
                 vEmail.setError(getString(R.string.error_not_exist_email));
                 vMessages.setText("");
                 vEmail.requestFocus();
                 break;
             case 2:
-                Toast.makeText(this,"wrong PWD !",Toast.LENGTH_LONG).show();
+                // Toast.makeText(this,"wrong PWD !",Toast.LENGTH_LONG).show();
                 vPassword.setError(getString(R.string.error_incorrect_password));
                 vMessages.setText("");
                 vPassword.requestFocus();
@@ -222,6 +220,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRestart();
         // Toast.makeText(this,"onRestart wakeup!" ,Toast.LENGTH_LONG).show();
         //clean screen
+        vEmail.setError(null);  // do not know why need this
         vEmail.setText("");
         vPassword.setText("");
         vMessages.setText("");
@@ -246,8 +245,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickFireBase(View view){
-        Intent intent = new Intent(this, FirebaseActivity.class);
-        startActivity(intent);
+        if(DbHelper.useSQL !=0)
+            DbHelper.getInstance().initDbHelper(); // running under debug
+        else {
+            Intent intent = new Intent(this, FirebaseActivity.class);
+            startActivity(intent);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -272,10 +275,10 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("MainActivity", "genFriendList:" + DbHelper.getInstance().fireDbHelper.queryMbrByIdList.size() +":"+genFriendListCnt);
                 if(genFriendListCnt == DbHelper.owner.getFriendSetSize()){
                     // the last message
-                    DbHelper.getInstance().resetWaitCount();
                     Log.d("MainActivity", "genFriendList tot:" + DbHelper.getInstance().fireDbHelper.queryMbrByIdList.size());
                     DbHelper.friendList.addAll(DbHelper.getInstance().fireDbHelper.queryMbrByIdList);
                     onClickEmailSignIn1(0);
+                    DbHelper.getInstance().resetWaitCount();
                 }
                 break;
             default:

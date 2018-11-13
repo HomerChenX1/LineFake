@@ -15,7 +15,7 @@ import android.widget.Toast;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
+/* Firebase finish */
 public class InfoActivity extends AppCompatActivity {
     private TextView vMessages;
     private ImageView vIcon;
