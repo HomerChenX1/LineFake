@@ -1,12 +1,9 @@
 package com.homer.linefake;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 /*
-DbHelper.getInstance().queryMemberByEmailExact(email)  need wait
-DbHelper.getInstance().registerMember(DbHelper.owner); need id
 DbHelper.getInstance().deleteOwner(); need wait
 */
 class DbHelper {
@@ -425,7 +422,7 @@ class DbHelper {
         // delete chatMsgTable by owner.ID IDfrom IDto
         deleteChatMsgByMbrId(ID);
         // delete owner.ID = 0 master.ID = 0
-        owner.setMbrID(0);
+        if(DbHelper.useSQL != 2 ) owner.setMbrID(0);
     }
     int deleteFriendOfOwner(int memberId){
         // delete member.id from   friendTable -> owner.friendset -> friendList

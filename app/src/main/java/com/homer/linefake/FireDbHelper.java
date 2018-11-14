@@ -80,7 +80,6 @@ class FireDbHelper {
             String pKey2 = pushedRef.getKey();
             pushedRef.setValue(ownerId);
             //Log.d("HomerfbAddFriend", pKey1 + ":" + pKey2);
-            // TODO send notify to masterId that ownerId is add
         }
         int deleteFriend(final int ownerId, final int masterId) {
             deleteFriendCnt = 0;
@@ -128,7 +127,6 @@ class FireDbHelper {
                 }
             });
             // Log.d("HomerfbDeleteFriend", "total del:" + deleteFriendCnt);
-            // TODO send notify to masterId that owneridis disappear
             return deleteFriendCnt; // this deleteFriendCnt  will be wrong because async
         }
 
@@ -187,19 +185,25 @@ class FireDbHelper {
         void deleteChatMsgByMbrId(final int mbrId){
             // ArrayList<ChatMsg> destChatMsgMbrIdList1 destChatMsgMbrIdList2
             delChatMsgMbrIdListCnt1 = 100;
+            // Log.d("HomerfbDelChatMsgMbrId", "mbrId:" + mbrId);
             // search x.getMbrIdFrom()==mbrId or
             DatabaseReference myRef = db.getReference(TABLE_NAME);
             myRef.orderByChild("chatId").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     delChatMsgMbrIdListCnt1 = (int) dataSnapshot.getChildrenCount();
-                    // Log.d("HomerfbDelChatMsgMbrId", "total cnt:" + delChatMsgMbrIdListCnt1);
+                    //Log.d("HomerfbDelChatMsgMbrId", "total cnt:" + delChatMsgMbrIdListCnt1);
                     for (DataSnapshot ds: dataSnapshot.getChildren()) {
                         delChatMsgMbrIdListCnt1--;
-                        int pKey = ds.child("mbrIdTo").getValue(Integer.class);
-                        if(pKey==mbrId) ds.getRef().removeValue();
-                        pKey = ds.child("mbrIdFrom").getValue(Integer.class);
-                        if(pKey==mbrId) ds.getRef().removeValue();
+                        //Log.d("HomerfbDelChatMsgMbrId", "key:" + dataSnapshot.getKey());
+                        try {
+                            int pKey = ds.child("mbrIdTo").getValue(Integer.class);
+                            if (pKey == mbrId) ds.getRef().removeValue();
+                            pKey = ds.child("mbrIdFrom").getValue(Integer.class);
+                            if (pKey == mbrId) ds.getRef().removeValue();
+                        }catch(NullPointerException e){
+                            continue;
+                        }
                     }
                 }
                 @Override
@@ -364,7 +368,7 @@ class FireDbHelper {
                 String tag = "HomerfbWatchChatOwner";
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot ds, @Nullable String s) {
-                    Log.d(tag, "onChildAdded:" + count++ + ":" + ds.getKey());
+                    // Log.d(tag, "onChildAdded:" + count++ + ":" + ds.getKey());
                     if(oldChatMsgSet.contains( ds.child("chatId").getValue(Integer.class)) ||
                             mbrIdFrom != ds.child("mbrIdFrom").getValue(Integer.class)){
                         // Log.d(tag, "onChildAdded:" + "pass" + ":" + oldChatMsgSet.size());
@@ -390,7 +394,8 @@ class FireDbHelper {
 
                 @Override
                 public void onChildRemoved(@NonNull DataSnapshot ds) {
-                    Log.d(tag, "onChildRemoved:" + count++);
+                    // Log.d(tag, "onChildRemoved:" + count++);
+                    EventBus.getDefault().post(new EbusEvent("onChildRemoved"));
                 }
 
                 @Override
@@ -421,7 +426,7 @@ class FireDbHelper {
                 String tag = "HomerfbWatchChatMaster";
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot ds, @Nullable String s) {
-                    Log.d(tag, "onChildAdded:" + count++ + ":" + ds.getKey());
+                    // Log.d(tag, "onChildAdded:" + count++ + ":" + ds.getKey());
                     if( oldChatMsgSet.contains(ds.child("chatId").getValue(Integer.class)) ||
                             mbrIdFrom != ds.child("mbrIdFrom").getValue(Integer.class) ){
                         // Log.d(tag, "onChildAdded:" + "pass" + ":" + oldChatMsgSet.size());
@@ -438,7 +443,8 @@ class FireDbHelper {
 
                 @Override
                 public void onChildRemoved(@NonNull DataSnapshot ds) {
-                    Log.d(tag, "onChildRemoved:" + count++);
+                    // Log.d(tag, "onChildRemoved:" + count++);
+                    EventBus.getDefault().post(new EbusEvent("onChildRemoved"));
                 }
 
                 @Override
@@ -470,7 +476,7 @@ class FireDbHelper {
             // Log.d("HomerfbAddMember", x.toString());
         }
         void updateMember(Member x){
-            Log.d("HomerfbUpdateMember", x.toString());
+            // Log.d("HomerfbUpdateMember", x.toString());
             DatabaseReference myRef = db.getReference(TABLE_NAME + "/" + String.valueOf(x.getMbrID()));
             // can not use myRef.setValue(x), system said x serialized fail???
             myRef.child("mbrAlias").setValue(x.getMbrAlias());
@@ -507,7 +513,7 @@ class FireDbHelper {
                     Log.d("HomerfbQueryMbrById", "onCancelled", databaseError.toException());
                 }
             });
-            // TODO: need to wait the real value
+            // need to wait the real value
             return null;
         }
 
@@ -533,7 +539,7 @@ class FireDbHelper {
                     Log.d("HomerfbQueryMbrById", "onCancelled", databaseError.toException());
                 }
             });
-            // TODO: need to wait the real value
+            //  need to wait the real value
             return;
         }
 
@@ -578,14 +584,14 @@ class FireDbHelper {
                             continue;
                         }
                     }
-                    Log.d("HomerfbQueryMbrByEmail","query cnt:"+queryMbrByEmailList.size());
+                    //Log.d("HomerfbQueryMbrByEmail","query cnt:"+queryMbrByEmailList.size());
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     Log.d("HomerfbQueryMbrByEmail", "onCancelled", databaseError.toException());
                 }
             });
-            //TODO : need wait
+            // need wait
             return queryMbrByEmailList;
         }
     }

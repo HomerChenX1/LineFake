@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /*
-DbHelper.getInstance().generateChannel(DbHelper.master.getMbrID()
-void watchChat(boolean owner){
+DbHelper.getInstance().generateChannel(DbHelper.master.getMbrID() OK
+void watchChat(boolean owner){ OK
 * */
 // will use RecyclerView
 public class ChannelActivity extends AppCompatActivity {
@@ -95,7 +95,7 @@ public class ChannelActivity extends AppCompatActivity {
 
     public void onClickMasterChat(View view){
         String temp = vMasterChat.getText().toString().trim();
-        Toast.makeText(view.getContext(), "MasterChat", Toast.LENGTH_SHORT).show();
+        // Toast.makeText(view.getContext(), "MasterChat", Toast.LENGTH_SHORT).show();
         if(TextUtils.isEmpty(temp)){
             vMasterChat.requestFocus();
             return;
@@ -125,7 +125,6 @@ public class ChannelActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // TODO : remove watch 2 listeners
         DbHelper.getInstance().fireDbHelper.chatMsgTable.watchChatOwner(true);
         DbHelper.getInstance().fireDbHelper.chatMsgTable.watchChatMaster(true);
         eventBus.unregister(this);
@@ -135,7 +134,7 @@ public class ChannelActivity extends AppCompatActivity {
     public void onEventMainThread(EbusEvent event) {
         switch (event.getEventMsg()) {
             case "countFinish":
-                Log.d("MainActivity", "Now it happenes countFinish");
+                Log.d("ChannelActivity", "Now it happenes countFinish");
                 break;
             case "generateChannel":
                 DbHelper.getInstance().fireDbHelper.genChannelList1.addAll(DbHelper.getInstance().fireDbHelper.genChannelList2);
@@ -143,11 +142,9 @@ public class ChannelActivity extends AppCompatActivity {
                 chnAdapter.notifyDataSetChanged();
                 //Log.d("HomerfbGenChannel", DbHelper.getInstance().fireDbHelper.genChannelList1.get(0).toString());
                 //Log.d("HomerfbGenChannel", DbHelper.getInstance().fireDbHelper.genChannelList1.get(1).toString());
-                //Log.d("HomerfbGenChannel", DbHelper.getInstance().fireDbHelper.genChannelList1.get(2).toString());
-                //Log.d("HomerfbGenChannel", DbHelper.getInstance().fireDbHelper.genChannelList1.get(3).toString());
 
-                Log.d("HomerfbWatchChat", "watch start!");
                 // creat a set to clear the watch child_add problem
+                DbHelper.getInstance().fireDbHelper.oldChatMsgSet.clear();
                 for(ChatMsg cm : DbHelper.getInstance().fireDbHelper.genChannelList1) {
                     DbHelper.getInstance().fireDbHelper.oldChatMsgSet.add(cm.getChatId());
                 }
@@ -158,6 +155,10 @@ public class ChannelActivity extends AppCompatActivity {
             case "addChatMsgRefresh":
                 chnAdapter.addChatMsgRefresh();
                 vChannel.scrollToPosition(channel.size() - 1);
+                break;
+            case "onChildRemoved":
+                // show information
+                Toast.makeText(this, "A chat message is deleted by some one!", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;

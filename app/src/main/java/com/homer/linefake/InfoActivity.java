@@ -100,7 +100,7 @@ public class InfoActivity extends AppCompatActivity {
             --DbHelper.multipleBack;
             finish();
         }
-        Toast.makeText(this,"onRestart wakeup!" ,Toast.LENGTH_LONG).show();
+        // Toast.makeText(this,"onRestart wakeup!" ,Toast.LENGTH_LONG).show();
         vIcon.setImageResource(DbHelper.owner.getMbrIconIdx());
         vAlias.setText(DbHelper.owner.getMbrAlias());
         friendAdapter.refresh(DbHelper.friendList);
@@ -119,7 +119,7 @@ public class InfoActivity extends AppCompatActivity {
     public void onEventMainThread(EbusEvent event) {
         switch (event.getEventMsg()) {
             case "countFinish":
-                Log.d("MainActivity", "Now it happenes countFinish");
+                Log.d("InfoActivity", "Now it happenes countFinish");
                 break;
             default:
                 break;

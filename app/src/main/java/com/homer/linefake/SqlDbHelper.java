@@ -201,7 +201,6 @@ public class SqlDbHelper extends SQLiteOpenHelper {
         void addMember(Member x){
             ContentValues values = new ContentValues();
             // values.put(nCOLS[0], x.getMbrId());
-            // TODO: modify getMbrIconIdx
             values.put(nCOLS[1], 0);
             values.put(nCOLS[2], x.getMbrAlias());
             values.put(nCOLS[3], x.getMbrPhone());
@@ -246,7 +245,7 @@ public class SqlDbHelper extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 Member m = new Member();
                 m.setMbrID(cursor.getInt(0));
-                // TODO modify setMbrIconIdx , cursor.getInt(1)
+                // modify setMbrIconIdx , cursor.getInt(1)
                 m.setMbrIconIdx();
                 m.setMbrAlias(cursor.getString(2));
                 m.setMbrPhone(cursor.getString(3));
@@ -279,7 +278,7 @@ public class SqlDbHelper extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 Member m = new Member();
                 m.setMbrID(cursor.getInt(0));
-                // TODO modify setMbrIconIdx , cursor.getInt(1)
+                //  modify setMbrIconIdx , cursor.getInt(1)
                 m.setMbrIconIdx();
                 m.setMbrAlias(cursor.getString(2));
                 m.setMbrPhone(cursor.getString(3));

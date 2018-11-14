@@ -108,7 +108,7 @@ public class FriendsActivity extends AppCompatActivity {
                 QueryMbrByIdType = 1;
                 int i = DbHelper.getInstance().addFriendOfOwner(memberSelect.getMbrID());
                 if(DbHelper.useSQL!=2) {
-                    Toast.makeText(this, String.valueOf(i) + ":" + " add by ID", Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(this, String.valueOf(i) + ":" + " add by ID", Toast.LENGTH_SHORT).show();
                     friendAdapter.refresh(DbHelper.friendList);
                 }
                 break;
@@ -128,7 +128,7 @@ public class FriendsActivity extends AppCompatActivity {
         QueryMbrByIdType = 2;
         int i = DbHelper.getInstance().addFriendOfOwner(id);
         if(DbHelper.useSQL!=2) {
-            Toast.makeText(this, String.valueOf(i) + ":" + " add by ID", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, String.valueOf(i) + ":" + " add by ID", Toast.LENGTH_SHORT).show();
             friendAdapter.refresh(DbHelper.friendList);
         }
     }
@@ -158,7 +158,7 @@ public class FriendsActivity extends AppCompatActivity {
     public void onEventMainThread(EbusEvent event) {
         switch (event.getEventMsg()) {
             case "countFinish":
-                Log.d("MainActivity", "Now it happenes countFinish");
+                Log.d("FriendsActivity", "Now it happenes countFinish");
                 break;
             case "HomerfbQueryMbrById":
                 Member m = new Member();
@@ -168,7 +168,7 @@ public class FriendsActivity extends AppCompatActivity {
                     DbHelper.getInstance().fireDbHelper.queryMbrByIdList.get(0).copyTo(m);
                 }
                 int i =DbHelper.getInstance().addFriendOfOwner2(m);
-                Toast.makeText(this, String.valueOf(i) + ":" + " add by ID", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(this, String.valueOf(i) + ":" + " add by ID", Toast.LENGTH_SHORT).show();
                 friendAdapter.refresh(DbHelper.friendList);
                 QueryMbrByIdType = 0;
                 break;

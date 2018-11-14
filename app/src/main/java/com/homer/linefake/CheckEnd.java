@@ -169,3 +169,18 @@ class doEmailLoginFB1CheckEnd extends CheckEnd{
         return super.checkEnd(strings);
     }
 }
+
+class deleteOwnerCheckEnd extends CheckEnd{
+    public deleteOwnerCheckEnd(Context context) {
+        super(context, 75);
+    }
+    @Override
+    protected boolean checkEnd(String... strings) {
+        if((DbHelper.getInstance().fireDbHelper.delChatMsgMbrIdListCnt1 == 0) &&
+                (DbHelper.getInstance().fireDbHelper.deleteFriendCnt != 0)){
+            EventBus.getDefault().post(new EbusEvent(strings[0]));
+            return true;
+        }
+        return super.checkEnd(strings);
+    }
+}

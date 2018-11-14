@@ -260,22 +260,22 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("MainActivity", "Now it happenes countFinish");
                 break;
             case "doEmailLoginFB":
-                Log.d("MainActivity", "doEmailLoginFB:" + DbHelper.getInstance().fireDbHelper.queryMbrByEmailList.size());
+                // Log.d("MainActivity", "doEmailLoginFB:" + DbHelper.getInstance().fireDbHelper.queryMbrByEmailList.size());
                 int i = DbHelper.getInstance().doEmailLoginFB1(DbHelper.getInstance().fireDbHelper.queryMbrByEmailList);
                 if(i!=0) onClickEmailSignIn1(i);
-                Log.d("MainActivity", "doEmailLoginFB:" + "retv=" + i);
+                // Log.d("MainActivity", "doEmailLoginFB:" + "retv=" + i);
                 break;
             case "doEmailLoginFB1":
-                Log.d("MainActivity", "doEmailLoginFB1:" + DbHelper.getInstance().fireDbHelper.queryFriendList.size());
+                // Log.d("MainActivity", "doEmailLoginFB1:" + DbHelper.getInstance().fireDbHelper.queryFriendList.size());
                 DbHelper.getInstance().doEmailLoginFB2(DbHelper.getInstance().fireDbHelper.queryFriendList);
                 genFriendListCnt = 0;
                 break;
             case "genFriendList":
                 genFriendListCnt++;
-                Log.d("MainActivity", "genFriendList:" + DbHelper.getInstance().fireDbHelper.queryMbrByIdList.size() +":"+genFriendListCnt);
+                // Log.d("MainActivity", "genFriendList:" + DbHelper.getInstance().fireDbHelper.queryMbrByIdList.size() +":"+genFriendListCnt);
                 if(genFriendListCnt == DbHelper.owner.getFriendSetSize()){
                     // the last message
-                    Log.d("MainActivity", "genFriendList tot:" + DbHelper.getInstance().fireDbHelper.queryMbrByIdList.size());
+                    // Log.d("MainActivity", "genFriendList tot:" + DbHelper.getInstance().fireDbHelper.queryMbrByIdList.size());
                     DbHelper.friendList.addAll(DbHelper.getInstance().fireDbHelper.queryMbrByIdList);
                     onClickEmailSignIn1(0);
                     DbHelper.getInstance().resetWaitCount();

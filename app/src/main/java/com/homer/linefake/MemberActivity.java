@@ -142,7 +142,6 @@ public class MemberActivity extends AppCompatActivity {
                 vEmail.setError(getString(R.string.error_duplicate_email));
                 return "vEmail";
             default:
-                // TODO check again
                 DbHelper.getInstance().queryMemberByEmailExact(email);
         }
         return "done";
@@ -153,7 +152,7 @@ public class MemberActivity extends AppCompatActivity {
         boolean cancel = true;
 
         String mString = chkEntries();
-        Log.d("MemberActivity","mString:"+mString);
+        // Log.d("MemberActivity","mString:"+mString);
         switch(mString){
             case "vAlias":
                 vFocus = vAlias;
@@ -177,14 +176,14 @@ public class MemberActivity extends AppCompatActivity {
             vFocus.requestFocus();
             return;
         }
-        Log.d("Homerfb", DbHelper.owner.toString());
+        //Log.d("Homerfb", DbHelper.owner.toString());
         if(mode == 1){
             // mode == 1 update, up owner to memberTable
             DbHelper.getInstance().updateMember(DbHelper.owner);
             finish();
         }else{
             ArrayList<Member> temp = DbHelper.getInstance().queryMemberByEmailExact(DbHelper.owner.getMbrEmail());
-            new doEmailLoginFBCheckEnd(50).execute("doEmailLoginFB");
+            if(DbHelper.useSQL==2) new doEmailLoginFBCheckEnd(50).execute("doEmailLoginFB");
         }
     }
     // mbr_cancel_btn
@@ -198,14 +197,12 @@ public class MemberActivity extends AppCompatActivity {
     }
     // when register mode, no delete button
     public void onClickMbrDelete(View view){
-        // need delete chat
-
         // jump to the bottom activity will induced backpress error
         // restart the application
         DbHelper.getInstance().deleteOwner();
-        // int retv = DbHelper.getInstance().deleteFriend(owner.getMbrID(),1);
-        Toast.makeText(view.getContext(), "Need check in SQLite", Toast.LENGTH_LONG).show();
-        restart();
+        if(DbHelper.useSQL==2)
+            new deleteOwnerCheckEnd(this).execute("deleteOwner");
+        else restart();
     }
     void restart1(){
         Intent i = getBaseContext().getPackageManager()
@@ -234,7 +231,7 @@ public class MemberActivity extends AppCompatActivity {
             case "doEmailLoginFB":
                 // now in register mode
                 int temp = DbHelper.getInstance().fireDbHelper.queryMbrByEmailList.size();
-                Log.d("MemberActivity", "doEmailLoginFB:" + temp);
+                //Log.d("MemberActivity", "doEmailLoginFB:" + temp);
                 if(temp!=0){
                     vEmail.setError(getString(R.string.error_duplicate_email));
                     vEmail.requestFocus();
@@ -248,6 +245,11 @@ public class MemberActivity extends AppCompatActivity {
                     // DbHelper.owner.setMbrID(0); do not add this for multiple update
                 }
                 finish();
+                break;
+            case "deleteOwner":
+                Log.d("MemberActivity", "deleteOwner finish");
+                owner.setMbrID(0);
+                restart();
                 break;
             default:
                 break;

@@ -15,7 +15,7 @@ import android.widget.Toast;
 import java.util.List;
 /*
 DbHelper.getInstance().deleteChat
-addChatMsgToChn(ChatMsg cm) ???
+addChatMsgToChn(ChatMsg cm) OK
 */
 public class ChnAdapter extends RecyclerView.Adapter<ChnAdapter.ViewHolder>
 {
