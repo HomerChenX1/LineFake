@@ -6,6 +6,7 @@ package com.homer.linefake;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.AndroidRuntimeException;
 import android.util.Log;
 
@@ -21,8 +22,10 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 class FireDbHelper {
     private FirebaseDatabase db;
@@ -47,6 +50,8 @@ class FireDbHelper {
     ArrayList<Member> queryMbrByIdList = new ArrayList<>();
     static int queryMbrByEmailCnt = 100;
     ArrayList<Member> queryMbrByEmailList = new ArrayList<>();
+    Set<Integer> oldChatMsgSet = new HashSet<>();
+    ChildEventListener listenerOwner, listenerMaster;
 
     /* ********************************************************** */
     class FriendTable {
@@ -344,46 +349,111 @@ class FireDbHelper {
             return genChannelList1;
         }
 
-        void watchChat(boolean owner){
-            // ower need to watch mbrIdTo == ownerId
-            // master need to watch mbrIdTo == masterId
-            Query wQuery;
+        void watchChatOwner(boolean removed){
             DatabaseReference myRef = db.getReference(TABLE_NAME);
-            if(owner) {
-                wQuery = myRef.orderByChild("mbrIdTo").equalTo(DbHelper.owner.getMbrID());
-            } else {
-                wQuery = myRef.orderByChild("mbrIdTo").equalTo(DbHelper.master.getMbrID());
+            if(removed){
+                myRef.removeEventListener(listenerOwner);
+                return;
             }
-            wQuery.addChildEventListener(new ChildEventListener() {
+            // ower need to watch mbrIdTo == ownerId  mbrIdFrom == masterId
+            Query wQuery = myRef.orderByChild("mbrIdTo").equalTo(DbHelper.owner.getMbrID());
+            listenerOwner = new ChildEventListener() {
                 int count = 0;
+                int mbrIdFrom = DbHelper.master.getMbrID();
 
+                String tag = "HomerfbWatchChatOwner";
                 @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                    Log.d("HomerfbWatchChat", "onChildAdded:" + count++ + ":" + dataSnapshot.getKey());
+                public void onChildAdded(@NonNull DataSnapshot ds, @Nullable String s) {
+                    Log.d(tag, "onChildAdded:" + count++ + ":" + ds.getKey());
+                    if(oldChatMsgSet.contains( ds.child("chatId").getValue(Integer.class)) ||
+                            mbrIdFrom != ds.child("mbrIdFrom").getValue(Integer.class)){
+                        // Log.d(tag, "onChildAdded:" + "pass" + ":" + oldChatMsgSet.size());
+                        return;
+                    }
+                    // owner catch the message ,  get ChatMsg to genChannelList1
+                    ChatMsg temp = new ChatMsg();
+                    temp.setChatId(ds.child("chatId").getValue(Integer.class));
+                    temp.setTimeStart(ds.child("timeStartLong").getValue(Long.class));
+                    temp.setMbrIdFrom(ds.child("mbrIdFrom").getValue(Integer.class));
+                    temp.setMbrIdTo(ds.child("mbrIdTo").getValue(Integer.class));
+                    temp.setChatType(ds.child("chatType").getValue(Integer.class));
+                    temp.setTxtMsg(ds.child("txtMsg").getValue(String.class));
+                    genChannelList1.add(temp);
+                    // EBus send message "addChatMsgRefresh"  and update chnAdapter addChatMsgRefresh
+                    EventBus.getDefault().post(new EbusEvent("addChatMsgRefresh"));
                 }
 
                 @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {
-                    Log.d("HomerfbWatchChat", "onChildChanged:" + count++ + ":" + dataSnapshot.getKey());
+                public void onChildChanged(@NonNull DataSnapshot ds, @Nullable String s) {
+                    Log.d(tag, "onChildChanged:" + count++ );
                 }
 
                 @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    Log.d("HomerfbWatchChat", "onChildRemoved:" + count++);
+                public void onChildRemoved(@NonNull DataSnapshot ds) {
+                    Log.d(tag, "onChildRemoved:" + count++);
                 }
 
                 @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {
-                    Log.d("HomerfbWatchChat", "onChildMoved:" + count++);
+                public void onChildMoved(@NonNull DataSnapshot ds, @Nullable String s) {
+                    Log.d(tag, "onChildMoved:" + count++);
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.d("HomerfbWatchChat", "onCancelled", databaseError.toException());
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d(tag, "onCancelled", databaseError.toException());
                 }
-            });
-
+            };
+            wQuery.addChildEventListener(listenerOwner);
         }
+
+        void watchChatMaster(boolean removed){
+            DatabaseReference myRef = db.getReference(TABLE_NAME);
+            if(removed){
+                myRef.removeEventListener(listenerMaster);
+                return;
+            }
+            // master need to watch mbrIdTo == masterId
+            Query wQuery = myRef.orderByChild("mbrIdTo").equalTo(DbHelper.master.getMbrID());
+
+            listenerMaster = new ChildEventListener() {
+                int count = 0;
+                int mbrIdFrom = DbHelper.owner.getMbrID();
+                String tag = "HomerfbWatchChatMaster";
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot ds, @Nullable String s) {
+                    Log.d(tag, "onChildAdded:" + count++ + ":" + ds.getKey());
+                    if( oldChatMsgSet.contains(ds.child("chatId").getValue(Integer.class)) ||
+                            mbrIdFrom != ds.child("mbrIdFrom").getValue(Integer.class) ){
+                        // Log.d(tag, "onChildAdded:" + "pass" + ":" + oldChatMsgSet.size());
+                        return;
+                    }
+
+                    // Log.d(tag, "onChildAdded:" + ds.getValue(ChatMsg.class).toString());
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot ds, @Nullable String s) {
+                    Log.d(tag, "onChildChanged:" + count++ );
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot ds) {
+                    Log.d(tag, "onChildRemoved:" + count++);
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot ds, @Nullable String s) {
+                    Log.d(tag, "onChildMoved:" + count++);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.d(tag, "onCancelled", databaseError.toException());
+                }
+            };
+            wQuery.addChildEventListener(listenerMaster);
+        }
+
     }
     /* ********************************************************** */
     class MemberTable extends FriendTable {

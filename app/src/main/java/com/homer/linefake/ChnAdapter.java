@@ -174,6 +174,9 @@ public class ChnAdapter extends RecyclerView.Adapter<ChnAdapter.ViewHolder>
         // need to change chatMsgTable
         notifyItemInserted(mDataSet.size() - 1);
     }
+    void addChatMsgRefresh() {
+        notifyItemInserted(mDataSet.size() - 1);
+    }
 
     // 刪除項目
     void removeChatMsgFromChn(int position){

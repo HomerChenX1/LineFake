@@ -101,15 +101,17 @@ public class ChannelActivity extends AppCompatActivity {
             return;
         }
         ChatMsg cm = new ChatMsg(DbHelper.master.getMbrID(), DbHelper.owner.getMbrID(), ChatMsg.chatTypeText, temp);
-        chnAdapter.addChatMsgToChn(cm);
         DbHelper.getInstance().addChat(cm);
-        vChannel.scrollToPosition(channel.size()-1);
-        vMessages.setText(cm.toString());
+        if(DbHelper.useSQL!=2) {
+            chnAdapter.addChatMsgToChn(cm);
+            vChannel.scrollToPosition(channel.size() - 1);
+            vMessages.setText(cm.toString());
+        }
     }
 
     public void onClickOwnerChat(View view){
         String temp = vOwnerChat.getText().toString().trim();
-        Toast.makeText(view.getContext(), "OwnerChat", Toast.LENGTH_SHORT).show();
+        // Toast.makeText(view.getContext(), "OwnerChat", Toast.LENGTH_SHORT).show();
         if(TextUtils.isEmpty(temp)){
             vOwnerChat.requestFocus();
             return;
@@ -124,12 +126,9 @@ public class ChannelActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         // TODO : remove watch 2 listeners
-        //ValueEventListener listener = new ValueEventListener();
-        //ref.addValueEventListener(listener);
-        //ref.removeEventListener(listener);
-        
+        DbHelper.getInstance().fireDbHelper.chatMsgTable.watchChatOwner(true);
+        DbHelper.getInstance().fireDbHelper.chatMsgTable.watchChatMaster(true);
         eventBus.unregister(this);
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -148,7 +147,17 @@ public class ChannelActivity extends AppCompatActivity {
                 //Log.d("HomerfbGenChannel", DbHelper.getInstance().fireDbHelper.genChannelList1.get(3).toString());
 
                 Log.d("HomerfbWatchChat", "watch start!");
-                DbHelper.getInstance().fireDbHelper.chatMsgTable.watchChat(false);
+                // creat a set to clear the watch child_add problem
+                for(ChatMsg cm : DbHelper.getInstance().fireDbHelper.genChannelList1) {
+                    DbHelper.getInstance().fireDbHelper.oldChatMsgSet.add(cm.getChatId());
+                }
+                // DbHelper.getInstance().fireDbHelper.chatMsgTable.watchChat(false);
+                DbHelper.getInstance().fireDbHelper.chatMsgTable.watchChatOwner(false);
+                DbHelper.getInstance().fireDbHelper.chatMsgTable.watchChatMaster(false);
+                break;
+            case "addChatMsgRefresh":
+                chnAdapter.addChatMsgRefresh();
+                vChannel.scrollToPosition(channel.size() - 1);
                 break;
             default:
                 break;
