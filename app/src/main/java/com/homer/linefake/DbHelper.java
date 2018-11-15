@@ -17,7 +17,7 @@ class DbHelper {
     static int multipleBack = 0;
     volatile int waitCount = 0;   // volatile is very important.
 
-    static int useSQL = 2; // =0 : use ArrayList, =1 use SQLite  =2 use Firebase
+    static int useSQL = 1; // =0 : use ArrayList, =1 use SQLite  =2 use Firebase
     SqlDbHelper sqlDbHelper = null;
     FireDbHelper fireDbHelper = null;
 

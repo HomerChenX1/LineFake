@@ -6,7 +6,7 @@
     <string name="prompt_email">Email (needed)</string>
     <string name="prompt_password">Password (6 digits needed at least)</string>
     <string name="action_sign_in">Sign in</string>
-    <string name="action_firebase">FireBase</string>
+    <string name="action_firebase">Create the DB</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_not_exist_email">This email address is not existed</string>
     <string name="error_duplicate_email">This email address is duplicate</string>

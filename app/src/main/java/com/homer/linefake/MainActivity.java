@@ -50,18 +50,6 @@ public class MainActivity extends AppCompatActivity {
 
         switch (DbHelper.useSQL){
             case 1: // use SQLite
-                // if database file exist, delete it
-                File dbFile = this.getDatabasePath(SqlDbHelper.DB_NAME);
-                String sMessage = dbFile.toString();
-
-                if(dbFile.exists()) {
-                    sMessage = sMessage + "\nThe db file exists. " + SqlDbHelper.DB_NAME;
-                    if(this.deleteDatabase(SqlDbHelper.DB_NAME)){
-                        // Toast.makeText(this,"The db file is deleted:" + SqlDbHelper.DB_NAME,Toast.LENGTH_LONG).show();
-                        sMessage = sMessage + ". Then deleted";
-                    }
-                }
-                vMessages.setText(sMessage);
                 // if database file not exist, run here
                 DbHelper.getInstance().sqlDbHelper = new SqlDbHelper(this);
                 DbHelper.getInstance().sqlDbHelper.setDb(true);
@@ -245,11 +233,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickFireBase(View view){
-        if(DbHelper.useSQL !=0)
-            DbHelper.getInstance().initDbHelper(); // running under debug
-        else {
-            Intent intent = new Intent(this, FirebaseActivity.class);
-            startActivity(intent);
+        switch(DbHelper.useSQL){
+            case 1: // SQLite
+                // close old SQLite
+                DbHelper.getInstance().sqlDbHelper.onDestroy();
+                // delete old SQLite
+                File dbFile = this.getDatabasePath(SqlDbHelper.DB_NAME);
+                String sMessage = dbFile.toString();
+                if(dbFile.exists()) {
+                    sMessage = sMessage + "\nThe db file exists. " + SqlDbHelper.DB_NAME;
+                    if(this.deleteDatabase(SqlDbHelper.DB_NAME)){
+                        // Toast.makeText(this,"The db file is deleted:" + SqlDbHelper.DB_NAME,Toast.LENGTH_LONG).show();
+                        sMessage = sMessage + ". Then deleted";
+                    }
+                }
+                // Log.d("Homersql", sMessage);
+                vMessages.setText(sMessage);
+                // open new SQLite
+                DbHelper.getInstance().sqlDbHelper = new SqlDbHelper(this);
+                DbHelper.getInstance().sqlDbHelper.setDb(true);
+                DbHelper.getInstance().initDbHelper();
+                break;
+            case 2: // Firebase DataBase
+                DbHelper.getInstance().fireDbHelper.deattache();
+                DbHelper.getInstance().fireDbHelper.onCreate();
+                DbHelper.getInstance().initDbHelper();
+                break;
+            default:
+                Intent intent = new Intent(this, FirebaseActivity.class);
+                startActivity(intent);
         }
     }
 

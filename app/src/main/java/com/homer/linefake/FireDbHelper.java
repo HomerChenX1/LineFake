@@ -66,6 +66,10 @@ class FireDbHelper {
             for(String s: nCOLS) temp.add(s);
             myRef.setValue(temp);
         }
+        void deattche(){
+            DatabaseReference myRef = db.getReference(TABLE_NAME);
+            myRef.setValue(null);
+        }
 
         void addFriend(int ownerId, int masterId){
             // to ownerId's friend add masterId
@@ -610,6 +614,13 @@ class FireDbHelper {
         friendTable.create();
         chatMsgTable.create();
     }
+
+    public void deattache(){
+        memberTable.deattche();
+        friendTable.deattche();
+        chatMsgTable.deattche();
+    }
+
     void onDestroy(){ db.goOffline(); }
 
     public static int randInt() {
