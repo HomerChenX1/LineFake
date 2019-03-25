@@ -10,6 +10,8 @@ import android.support.annotation.Nullable;
 import android.util.AndroidRuntimeException;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -629,4 +631,56 @@ class FireDbHelper {
         Random rand = new Random();
         return rand.nextInt((max - min) + 1) + min;
     }
+}
+
+class FbDbBasic {
+    private String TAG = "FbDbBasic";
+    private final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private String dbPath = null;
+    private DatabaseReference ref = null;
+    // database.getReference("server/saving-data/fireblog/posts");
+
+    public FbDbBasic() { }
+
+    public String getDbPath() { return dbPath; }
+    public void setDbPath(String dbPath) { this.dbPath = dbPath; }
+    public DatabaseReference getRef() { return ref; }
+    // public void setRef(DatabaseReference ref) { this.ref = ref; }
+    public void setRef() { this.ref = database.getReference(dbPath); }
+
+    public ValueEventListener genValueEventListener(boolean booking){
+        ValueEventListener result = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // retValue = dataSnapshot.getValue(x.class);
+                // dataSnapshot.getValue(aClass.getClass());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+        // booking the result
+        if (booking) Log.d(TAG, "result is need booking for future remove.");
+        return result;
+    }
+
+    public void write(Object v) { ref.setValue(v); }
+    public void writeComplete(Object v) {
+        ref.setValue(v)
+          .addOnSuccessListener(new OnSuccessListener<Void>() {
+              @Override
+              public void onSuccess(Void aVoid) { Log.d(TAG, "Write was successful!"); }
+          })
+          .addOnFailureListener(new OnFailureListener() {
+              @Override
+              public void onFailure(@NonNull Exception e) { Log.d(TAG, "Write failed"); }
+          });
+    }
+    public void read() { ref.addValueEventListener(genValueEventListener(true)); }
+    public void readSingle() { ref.addListenerForSingleValueEvent(genValueEventListener(false));}
+    // public void update() { ref.updateChildren(); }
+    public void delete() { ref.removeValue(); }
+    public void detachListener(ValueEventListener listener) { ref.removeEventListener(listener); }
 }
